@@ -7,8 +7,9 @@ desktop.ini
 .vscode/
 .idea/
 
-# Impeccable local state (keep the shared config, drop the local override)
-.impeccable/config.local.json
+# Local tooling state — not part of the site
+.impeccable/
+.claude/
 
 # Unused source images kept locally but not shipped
 falcon-red-outline-hi.png
