@@ -29,6 +29,32 @@
      Without this class the page renders fully visible. */
   document.documentElement.classList.add('js');
 
+  /* ── PRIVACY NOTICE ──
+     Shown once until dismissed. localStorage, not a cookie — which is
+     itself consistent with what the notice says. */
+  (function(){
+    var bar = document.getElementById('cookieNotice');
+    var ok  = document.getElementById('cookieOk');
+    if(!bar || !ok) return;
+
+    var KEY = 'tpso-privacy-ack';
+    var seen;
+    try { seen = localStorage.getItem(KEY); } catch(e) { seen = '1'; }
+    if(seen) return;
+
+    bar.hidden = false;
+    // next frame, so the slide-up transition has a start state to animate from
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){ bar.setAttribute('data-show',''); });
+    });
+
+    ok.addEventListener('click', function(){
+      bar.removeAttribute('data-show');
+      try { localStorage.setItem(KEY, '1'); } catch(e) {}
+      window.setTimeout(function(){ bar.hidden = true; }, 600);
+    });
+  })();
+
   /* ── NAV: pin on scroll ── */
   var nav = document.getElementById('nav');
   function onScroll(){ nav.classList.toggle('pinned', window.scrollY > 24); }
