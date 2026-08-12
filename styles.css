@@ -677,6 +677,8 @@ img,svg{max-width:100%;display:block}
 .about-head .h2{max-width:16ch}
 
 .officers{background:var(--leather)}
+/* room under the last row so the privacy bar never sits on a name */
+.officers .shell{padding-bottom:clamp(90px,12vw,150px)}
 .section-label{
   font-family:var(--ui);font-size:.74rem;font-weight:700;
   letter-spacing:.2em;text-transform:uppercase;color:var(--bullion);
@@ -736,7 +738,8 @@ img,svg{max-width:100%;display:block}
 .cookie{
   position:fixed;z-index:200;
   left:var(--gutter);right:var(--gutter);bottom:clamp(14px,3vh,26px);
-  max-width:640px;margin-inline:auto;
+  max-width:min(560px, calc(100% - var(--gutter) * 2));
+  margin-inline:auto;
   display:flex;flex-wrap:wrap;align-items:center;gap:14px clamp(16px,3vw,26px);
   padding:clamp(15px,2.2vw,20px) clamp(17px,2.4vw,24px);
   background:rgba(36,21,18,.97);

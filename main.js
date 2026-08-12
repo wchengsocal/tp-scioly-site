@@ -124,9 +124,8 @@
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
-    /* The flying bird is `falconnew.png` — a full-body falcon in flight,
-       black with dark-red accents. Used as-is: the dark silhouette reads
-       cleanly against the wool ground and its red picks up the palette. */
+    /* The flying mark is the school logo itself, drawn to the canvas each
+       frame — never traced or recoloured. */
     var logo = new Image();
     var logoReady = false;
     logo.onload = function(){ logoReady = true; falconScroll(); };
