@@ -23,15 +23,18 @@
   --stitch-strong:rgba(242,230,212,.42);
 
   /* ── TYPE SYSTEM ──────────────────────────────────────────────
-     Five sans faces, each with one job. They only read as a system
-     because the roles never overlap:
-       Manrope   display    headlines — tight, high-waisted, geometric
+     One serif against four sans faces, each with one job. They only
+     read as a system because the roles never overlap:
+       Georgia   display    headlines — serif, mixed case, high contrast
        Inter     body       running prose — the most readable at 16-18px
        DM Sans   ui         labels, nav, buttons — wide-tracked caps
        Roboto    data       dates, counters, tabular figures
        Poppins   accent     the closing call, used sparingly
      ─────────────────────────────────────────────────────────── */
-  --display:'Manrope', system-ui, sans-serif;
+  /* Georgia: a serif with real weight in its bowls, set in mixed case.
+     It reads like the lettering on a varsity award certificate rather
+     than a modern grotesque. Bold, not 800 — Georgia has no 800. */
+  --display:Georgia, 'Times New Roman', serif;
   --body:'Inter', system-ui, sans-serif;
   --ui:'DM Sans', system-ui, sans-serif;
   --data:'Roboto', system-ui, sans-serif;
@@ -215,8 +218,14 @@ img,svg{max-width:100%;display:block}
   .hero{height:auto}
   .hero-stage{position:relative;height:auto;min-height:100svh}
 }
+/* The badge sits low enough that the falcon's arc passes above it rather
+   than through it — the margin is what buys that clearance on short
+   viewports, where the arc has least room to work with. */
 .crest{
-  width:min(300px, 62vw, 34vh);height:auto;margin-inline:auto;
+  width:min(268px, 56vw, 30vh);height:auto;margin-inline:auto;
+  /* The falcon's arc crests in the band between the nav and this badge,
+     so the badge starts low enough to leave that lane clear. */
+  margin-top:clamp(150px,20vh,240px);
   filter:drop-shadow(0 10px 22px rgba(36,21,18,.5));
 }
 
@@ -228,10 +237,12 @@ img,svg{max-width:100%;display:block}
 }
 .hero-title{
   margin-top:clamp(18px,3vh,30px);
-  font-family:var(--display);font-weight:800;
-  font-size:clamp(1.95rem,1.15rem + 3.9vw,3.9rem);
-  line-height:1.0;letter-spacing:-.028em;
-  text-transform:uppercase;
+  font-family:var(--display);font-weight:700;
+  /* vmin, not vw: on a short wide screen (a Chromebook) the headline has to
+     answer to the height it has, not just the width. Only this headline
+     shrinks — the subtext and labels below keep their sizes. */
+  font-size:clamp(1.75rem,1.05rem + 3.1vmin,3.5rem);
+  line-height:1.04;letter-spacing:-.012em;
   color:var(--bone);
   max-width:15ch;margin-inline:auto;
   text-shadow:0 2px 0 rgba(36,21,18,.28);
@@ -337,9 +348,50 @@ img,svg{max-width:100%;display:block}
   .marquee-track::-webkit-scrollbar{display:none}
 }
 
+/* ── SHORT VIEWPORTS (laptops, Chromebooks, landscape phones) ──
+   The hero has a fixed budget: nav + badge + headline + subtext + actions
+   + dates + hem must fit one screen. On a short screen everything scales
+   down together so the hem stays on-screen and the dates keep their
+   breathing room above it — rather than the bottom rows being pushed off. */
+@media (max-height: 860px) and (min-width: 700px){
+  .crest{width:min(196px,38vw,23vh);margin-top:clamp(132px,19vh,190px)}
+  .hero-title{font-size:clamp(1.6rem,.95rem + 2.6vmin,2.9rem)}
+  .hero-body{padding-top:0;padding-bottom:clamp(16px,2.6vh,26px)}
+  .hero-body .thin{font-size:.95rem}
+  .hero-actions{margin-top:clamp(18px,2.6vh,26px)}
+  .hero-next{margin-top:clamp(16px,2.4vh,24px)}
+}
+@media (max-height: 720px) and (min-width: 700px){
+  .crest{width:min(148px,30vw,19vh);margin-top:clamp(156px,22vh,196px)}
+  .hero-title{font-size:clamp(1.45rem,.9rem + 2.2vmin,2.4rem)}
+  .hero-body{padding-top:0}
+  .hero-body .thin{font-size:.9rem}
+}
+
+/* Phones: the same budget, tighter. The hem must stay on screen, so the
+   badge and headline give up the room rather than the bottom rows. */
+@media (max-width: 699px){
+  .crest{width:min(168px,38vw);margin-top:clamp(128px,18vh,164px)}
+  .hero-title{font-size:clamp(1.5rem,1rem + 3.4vmin,2.3rem)}
+  .hero-body{padding-top:0;padding-bottom:clamp(12px,2.2vh,20px)}
+  .hero-actions{margin-top:clamp(16px,2.4vh,24px)}
+  .hero-next{margin-top:clamp(14px,2.2vh,20px)}
+}
+@media (max-width: 699px) and (max-height: 700px){
+  .crest{width:min(98px,22vw);margin-top:clamp(140px,20vh,168px)}
+  .hero-title{font-size:clamp(1.2rem,.9rem + 2.4vmin,1.6rem)}
+  .hero-body{padding-top:0;padding-bottom:clamp(10px,1.8vh,16px)}
+  .hero-body .thin{font-size:.86rem}
+  .hero-actions{margin-top:clamp(12px,1.8vh,18px)}
+  .hero-next{margin-top:clamp(10px,1.6vh,16px)}
+}
+
 /* jacket knit hem at the bottom of the hero */
 .hem{
   position:relative;z-index:2;
+  /* border-box so the 2px top border stays inside the hem's height —
+     otherwise the stage overflows its 100svh by the border width. */
+  box-sizing:border-box;
   height:clamp(52px,7vh,74px);
   background:
     repeating-linear-gradient(90deg,
@@ -360,9 +412,9 @@ img,svg{max-width:100%;display:block}
 /* ═══ SECTION SHELL ═══ */
 .shell{max-width:1240px;margin-inline:auto;padding:clamp(64px,9vw,124px) var(--gutter)}
 .h2{
-  font-family:var(--display);font-weight:800;
-  font-size:clamp(1.75rem,1.15rem + 2.5vw,3.1rem);
-  line-height:1.06;letter-spacing:-.022em;text-transform:uppercase;
+  font-family:var(--display);font-weight:700;
+  font-size:clamp(1.85rem,1.2rem + 2.6vw,3.3rem);
+  line-height:1.1;letter-spacing:-.01em;
   max-width:20ch;
 }
 .lede{
@@ -397,9 +449,9 @@ img,svg{max-width:100%;display:block}
   letter-spacing:.16em;color:var(--bullion);
 }
 .disc-name{
-  font-family:var(--display);font-weight:800;
-  font-size:clamp(1.5rem,1rem + 2.4vw,2.9rem);
-  line-height:1;letter-spacing:-.03em;text-transform:uppercase;
+  font-family:var(--display);font-weight:700;
+  font-size:clamp(1.58rem,1.05rem + 2.5vw,3rem);
+  line-height:1.04;letter-spacing:-.012em;
   color:var(--bone);
   transition:color .35s var(--ease);
 }
@@ -492,9 +544,9 @@ img,svg{max-width:100%;display:block}
   font-variant-numeric:tabular-nums;
 }
 .leg h3{
-  font-family:var(--display);font-weight:800;text-transform:uppercase;
-  font-size:clamp(1.1rem,.98rem + .6vw,1.42rem);letter-spacing:-.02em;
-  margin:6px 0 7px;line-height:1.1;
+  font-family:var(--display);font-weight:700;
+  font-size:clamp(1.14rem,1rem + .62vw,1.48rem);letter-spacing:-.008em;
+  margin:6px 0 7px;line-height:1.16;
 }
 .leg p{color:var(--wool-tint);max-width:48ch;font-size:.99rem}
 
@@ -565,8 +617,8 @@ img,svg{max-width:100%;display:block}
   letter-spacing:.2em;text-transform:uppercase;color:var(--bullion);
 }
 .track h3{
-  font-family:var(--display);font-weight:800;text-transform:uppercase;
-  font-size:clamp(1.4rem,1.1rem + 1.1vw,2rem);line-height:1.02;letter-spacing:-.03em;
+  font-family:var(--display);font-weight:700;
+  font-size:clamp(1.46rem,1.14rem + 1.15vw,2.1rem);line-height:1.08;letter-spacing:-.012em;
 }
 .track p{color:var(--bone-dim);font-size:1rem}
 .track.primary p{color:var(--wool-tint)}
@@ -599,9 +651,9 @@ img,svg{max-width:100%;display:block}
   letter-spacing:.18em;color:var(--bullion);display:block;margin-bottom:12px;
 }
 .step h3{
-  font-family:var(--display);font-weight:800;text-transform:uppercase;
-  font-size:clamp(1.02rem,.95rem + .4vw,1.22rem);line-height:1.08;
-  letter-spacing:-.02em;margin-bottom:9px;
+  font-family:var(--display);font-weight:700;
+  font-size:clamp(1.06rem,.98rem + .42vw,1.28rem);line-height:1.14;
+  letter-spacing:-.008em;margin-bottom:9px;
 }
 .step p{color:var(--bone-dim);font-size:.96rem}
 
@@ -617,9 +669,9 @@ img,svg{max-width:100%;display:block}
   list-style:none;cursor:pointer;
   display:flex;align-items:flex-start;gap:16px;
   padding:clamp(18px,2.2vw,24px) 0;
-  font-family:var(--display);font-weight:800;text-transform:uppercase;
-  font-size:clamp(1rem,.94rem + .42vw,1.22rem);line-height:1.16;
-  letter-spacing:-.02em;color:var(--bone);
+  font-family:var(--display);font-weight:700;
+  font-size:clamp(1.04rem,.97rem + .44vw,1.28rem);line-height:1.22;
+  letter-spacing:-.008em;color:var(--bone);
   transition:color .3s var(--ease);
 }
 .qa summary::-webkit-details-marker{display:none}
@@ -715,9 +767,9 @@ img,svg{max-width:100%;display:block}
 
 /* Placeholder state: initials chain-stitched onto the felt */
 .portrait-initials{
-  font-family:var(--display);font-weight:800;
+  font-family:var(--display);font-weight:700;
   font-size:clamp(1.8rem,1.2rem + 2.4vw,2.9rem);
-  letter-spacing:-.02em;color:rgba(242,230,212,.32);
+  letter-spacing:.01em;color:rgba(242,230,212,.32);
   line-height:1;user-select:none;
 }
 
@@ -726,9 +778,9 @@ img,svg{max-width:100%;display:block}
   letter-spacing:.17em;text-transform:uppercase;color:var(--bullion);
 }
 .member-name{
-  font-family:var(--display);font-weight:800;text-transform:uppercase;
-  font-size:clamp(1.02rem,.94rem + .42vw,1.26rem);
-  line-height:1.08;letter-spacing:-.022em;color:var(--bone);
+  font-family:var(--display);font-weight:700;
+  font-size:clamp(1.06rem,.97rem + .44vw,1.32rem);
+  line-height:1.14;letter-spacing:-.008em;color:var(--bone);
   margin-top:-6px;
 }
 

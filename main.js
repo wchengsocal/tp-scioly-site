@@ -142,13 +142,34 @@
          open air above and beside it rather than through the headline.
          On phones the copy fills more of the screen, so the arc flattens
          into the top band where there is still room. */
-      var base = small ? .30 : .62;
-      var lift = small ? .24 : .52;
+      /* `base` is where the arc's ends sit, `lift` how high it crests.
+         The whole flight stays in the top band of the hero, above the
+         badge — the ends are high enough that the bird never drops into
+         the badge's row on its way in or out. */
+      var base = small ? .13 : .15;
+      var lift = small ? .11 : .12;
+
+      var w    = Math.min(W, H) * (small ? .21 : .17);
+      // ratio falls back until the image has loaded, so the arc is placed correctly from frame one
+      var ratio = logoReady && logo.naturalWidth ? logo.naturalHeight / logo.naturalWidth : .55;
+      var tall = w * ratio;
+      var wob  = H * .022;
+
+      /* The whole arc is shifted so its crest sits a fixed gap below the nav
+         — high in the hero, above the badge. The curve itself is untouched;
+         it just rides higher or lower as a unit. `reach` is half the bird's
+         diagonal, so a banked bird still clears the nav. */
+      var reach   = Math.sqrt(w * w + tall * tall) / 2;
+      var navH    = nav ? nav.getBoundingClientRect().height : 64;
+      var wantTop = navH + reach + wob - 12;    // the gap below the nav
+      var rawPeak = H * (base - lift);          // where the sine would crest
+      var drop    = wantTop - rawPeak;          // shift (either direction)
+
       function pathX(t){ return W * (-.12 + t * 1.24); }
-      function pathY(t){ return H * (base - Math.sin(t * Math.PI) * lift); }
+      function pathY(t){ return H * (base - Math.sin(t * Math.PI) * lift) + drop; }
 
       var x = pathX(p);
-      var y = pathY(p) + beat * H * .022;
+      var y = pathY(p) + beat * wob;
 
       /* the gold thread the falcon stitches behind it */
       ctx.beginPath();
@@ -164,10 +185,8 @@
 
       if(!logoReady) return;
 
-      /* The school mark is landscape, so it is sized off width. The beat
-         drives a slight vertical squash so it reads as flying, not sliding. */
-      var w    = Math.min(W, H) * (small ? .30 : .20);
-      var tall = w * (logo.naturalHeight / logo.naturalWidth || .55);
+      /* The beat drives a slight vertical squash so it reads as flying,
+         not sliding. (w and tall are computed above, for the clamp.) */
       var bank = (-.26 + p * .48) + beat * .10;
 
       ctx.save();
