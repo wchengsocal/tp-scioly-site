@@ -200,6 +200,18 @@
       ctx.restore();
     }
 
+    /* The hero copy starts high — where it looks right at rest — and yields
+       downward only while the falcon is overhead, then returns. The shift
+       peaks with the arc's crest, so the two movements are one gesture
+       rather than the copy sitting permanently low to make room. */
+    var body = document.querySelector('.hero-body');
+    function yieldCopy(p){
+      if(!body) return;
+      // 0 at the edges, 1 at mid-flight — same shape as the arc itself
+      var over = Math.sin(Math.max(0, Math.min(1, p)) * Math.PI);
+      body.style.setProperty('--yield', (over * over).toFixed(3));
+    }
+
     /* scrub the flight against scroll position over the runway */
     var fTicking = false;
     function falconScroll(){
@@ -208,6 +220,7 @@
       var p = total > 0 ? (-r.top) / total : 0;
       p = Math.max(0, Math.min(1, p));
       draw(p);
+      yieldCopy(p);
       fTicking = false;
     }
 
