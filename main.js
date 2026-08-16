@@ -5,19 +5,14 @@
    Everything is inside one IIFE; nothing touches the global scope.
 
    Contents, in order:
-     1. Reveal arming ....... adds .js so no-JS renders fully visible
-     2. Nav ................. pins a background on scroll
-     3. Falcon flight ....... scroll-scrubbed logo on a canvas runway
-     4. Season strip ........ builds the calendar, lights it once
-     5. Patch stitch-on ..... the hero crest sewing itself together
-     6. Hero parallax ....... the crest settling as you scroll away
-     7. Scroll progress ..... bullion thread across the top
-     8. Heading word wipe ... section headlines rising word by word
-     9. Scroll reveals ...... IntersectionObserver, fire once
-    10. Season thread ....... bullion line drawing down the calendar
-    11. Counters ........... animated figures, supports data-prefix
-    12. Roster accordion ... discipline panels
-    13. Track panels ....... pointer-follow warm light (fine pointers)
+     1. State arming ........ adds .js so no-JS renders everything open
+     2. Nav ................. pins on scroll, and the mobile menu
+     3. Anchor glide ........ capped-duration scroll to in-page targets
+     4. Hero ................ keep-scrolling cue, crest stitch-on, the
+                              scroll-scrubbed falcon, and the crest settle
+     5. Season thread ....... bullion line drawing down the calendar
+     6. Gallery ............. the patches sewing themselves on
+     7. Roster accordion .... discipline panels
 
    Every effect checks `reduced` and degrades to a static state.
    ═══════════════════════════════════════════════════════════════ */
@@ -369,42 +364,6 @@
     window.addEventListener('resize', function(){ resize(); falconScroll(); }, {passive:true});
   })();
 
-  /* ── TOURNAMENT MARQUEE: real calendar, running ── */
-  (function(){
-    var track = document.getElementById('marqueeTrack');
-    if(!track) return;
-    /* Keep in step with the #season list in index.html. These are the same
-       stops in the same order; there is no shared source for them yet. */
-    var stops = [
-      ['Sep 9',   'Information meeting'],
-      ['Sep 23',  'Application deadline'],
-      ['Sep 27',  'Teams released'],
-      ['Jan',     'USC Invitational'],
-      ['Feb',     'Golden Gate Invitational'],
-      ['TBD',     'UCSD Triton Invitational'],
-      ['Feb',     'San Diego Regionals'],
-      ['Apr',     'Southern California State']
-    ];
-    track.innerHTML = stops.map(function(s){
-      return '<span class="marquee-item"><b>' + s[0] + '</b>' + s[1] + '</span>';
-    }).join('');
-
-    /* one pass of light down the strip as it comes into view, then still */
-    if(reduced) return;
-    var items = track.querySelectorAll('.marquee-item');
-    var sio = new IntersectionObserver(function(en){
-      en.forEach(function(e){
-        if(!e.isIntersecting) return;
-        sio.disconnect();
-        items.forEach(function(it, i){
-          it.animate([{opacity:0, transform:'translateY(7px)'},{opacity:1, transform:'none'}],
-            {duration:520, delay:i*70, easing:'cubic-bezier(.22,1,.36,1)', fill:'both'});
-        });
-      });
-    }, {threshold:.35});
-    sio.observe(track);
-  })();
-
   /* ── HERO: the patch settles as you scroll away from it ── */
   (function(){
     var crest = document.querySelector('.crest');
@@ -428,76 +387,17 @@
     apply();
   })();
 
-  /* ── A bullion thread tracks reading progress down the page ── */
-  (function(){
-    if(reduced) return;
-    var bar = document.createElement('div');
-    bar.className = 'progress';
-    bar.setAttribute('aria-hidden','true');
-    document.body.appendChild(bar);
-    var ticking = false;
-    function apply(){
-      var d = document.documentElement;
-      var max = d.scrollHeight - d.clientHeight;
-      bar.style.transform = 'scaleX(' + (max > 0 ? window.scrollY / max : 0) + ')';
-      ticking = false;
-    }
-    window.addEventListener('scroll', function(){
-      if(!ticking){ ticking = true; requestAnimationFrame(apply); }
-    }, {passive:true});
-    window.addEventListener('resize', apply, {passive:true});
-    apply();
-  })();
-
-  /* ── Section headings wipe in word by word ── */
-  (function(){
-    if(reduced) return;
-    document.querySelectorAll('.h2').forEach(function(h){
-      if(h.querySelector('.wd')) return;
-      /* The word wipe IS this heading's entrance. Drop the block reveal so
-         the two don't run at once, a fading, rising box whose words are
-         also fading and rising reads as mush, not as one gesture. This runs
-         before the .rv observer is wired below, so the heading is never
-         picked up by it. */
-      h.classList.remove('rv');
-      var frag = [];
-      h.childNodes.forEach(function(n){
-        if(n.nodeType === 3){
-          n.textContent.split(/(\s+)/).forEach(function(t){
-            if(!t.trim()){ frag.push(document.createTextNode(t)); return; }
-            var s = document.createElement('span');
-            s.className = 'wd'; s.textContent = t;
-            frag.push(s);
-          });
-        } else {
-          frag.push(n.cloneNode(true));
-        }
-      });
-      h.replaceChildren.apply(h, frag);
-    });
-    var wio = new IntersectionObserver(function(en){
-      en.forEach(function(e){
-        if(!e.isIntersecting) return;
-        wio.unobserve(e.target);
-        e.target.querySelectorAll('.wd').forEach(function(w, i){
-          w.animate(
-            [{opacity:0, transform:'translateY(90%) rotate(2deg)'},
-             {opacity:1, transform:'none'}],
-            {duration:700, delay:i*55, easing:'cubic-bezier(.22,1,.36,1)', fill:'both'}
-          );
-        });
-      });
-    }, {threshold:.3});
-    document.querySelectorAll('.h2').forEach(function(h){ wio.observe(h); });
-  })();
-
-  /* ── REVEAL on scroll ── */
+  /* ── GALLERY: the patches sew themselves on ──
+     The only scroll-triggered entrance left on the site. Everything else
+     used to fade and rise on the way in, which is the single most
+     recognisable generated-site behaviour and made twenty-five elements
+     share one identical move. Content now just is where it is. */
   var io = new IntersectionObserver(function(entries){
     entries.forEach(function(e){
       if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
     });
   }, {threshold:.14, rootMargin:'0px 0px -6% 0px'});
-  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+  document.querySelectorAll('.sew').forEach(function(el){ io.observe(el); });
 
   /* ── SEASON: the bullion thread runs down the schedule ── */
   var legs = document.getElementById('legs');
@@ -507,42 +407,6 @@
     }, {threshold:.25});
     lio.observe(legs);
   }
-
-  /* ── AWARD counters ──
-     Plain cardinals count up: every intermediate value is a smaller true
-     number. Prefixed values do NOT count. "3–4" is a range and "Top 20" is a
-     threshold, so ticking them renders "3–1" and "Top 7", not smaller
-     numbers but false statements, held on screen for over a second. Those
-     arrive whole, with a stitch-in that matches the patch instead. */
-  var cio = new IntersectionObserver(function(entries){
-    entries.forEach(function(e){
-      if(!e.isIntersecting) return;
-      var el = e.target, target = parseInt(el.dataset.count, 10);
-      var pre = el.dataset.prefix || '';
-      cio.unobserve(el);
-
-      /* the true value is in the DOM from the first frame either way */
-      el.textContent = pre + target;
-      if(reduced) return;
-
-      if(pre){
-        el.animate(
-          [{opacity:0, transform:'translateY(9px) scale(.96)'},
-           {opacity:1, transform:'none'}],
-          {duration:520, easing:'cubic-bezier(.22,1,.36,1)', fill:'both'}
-        );
-        return;
-      }
-
-      var dur = 1300, t0 = performance.now();
-      requestAnimationFrame(function tick(now){
-        var p = Math.min(1, (now - t0) / dur);
-        el.textContent = String(Math.round(target * (1 - Math.pow(1 - p, 3))));
-        if(p < 1) requestAnimationFrame(tick);
-      });
-    });
-  }, {threshold:.6});
-  document.querySelectorAll('[data-count]').forEach(function(el){ cio.observe(el); });
 
   /* ── ROSTER: disciplines open ── */
   document.querySelectorAll('.disc-row').forEach(function(btn){
@@ -564,90 +428,7 @@
     if(firstPanel) firstPanel.setAttribute('data-open','');
   }
 
-  /* ── HALFTONE DOT FIELD ──
-     A printer's screen laid over the sleeve leather: a fixed grid whose dot
-     radius swells toward a focal point, the way a halftone image carries
-     tone through dot size rather than colour. The focal point rides the
-     section's scroll progress, so the tone sweeps across as it comes into
-     view. Purely decorative, aria-hidden, and skipped under reduced
-     motion, where a single still screen is drawn instead. */
-  (function(){
-    var cv = document.getElementById('dotField');
-    if(!cv) return;
-    var host = cv.parentElement;
-    var ctx  = cv.getContext('2d');
-    var W = 0, H = 0;
-    var reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
-
-    var GAP = 20;            // grid pitch in CSS px
-    var RMAX = 3.9;          // biggest dot at the focus
-    var RMIN = .35;          // faintest dot at the far edge
-
-    function size(){
-      var r = host.getBoundingClientRect();
-      var dpr = Math.min(window.devicePixelRatio || 1, 2);
-      W = r.width; H = r.height;
-      cv.width = Math.round(W * dpr);
-      cv.height = Math.round(H * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    }
-
-    function paint(prog){
-      if(!W || !H) return;
-      ctx.clearRect(0, 0, W, H);
-
-      /* focus travels left→right and dips, so the swell reads as a pass of
-         light over the felt rather than a pulsing blob */
-      var fx = W * (-.15 + prog * 1.30);
-      var fy = H * (.30 + Math.sin(prog * Math.PI) * .42);
-      var span = Math.hypot(W, H) * .55;
-
-      for(var y = GAP / 2; y < H; y += GAP){
-        for(var x = GAP / 2; x < W; x += GAP){
-          var d = Math.hypot(x - fx, y - fy) / span;
-          var t = d > 1 ? 0 : (1 - d) * (1 - d);        // eased falloff
-          var r = RMIN + (RMAX - RMIN) * t;
-          if(r <= RMIN + .02) continue;                  // skip invisible dots
-          ctx.beginPath();
-          ctx.arc(x, y, r, 0, Math.PI * 2);
-          // bullion at the focus fading to bone at the edges
-          ctx.fillStyle = 'rgba(224,163,60,' + (.07 + t * .50).toFixed(3) + ')';
-          ctx.fill();
-        }
-      }
-    }
-
-    function progress(){
-      var r = host.getBoundingClientRect();
-      var vh = window.innerHeight;
-      // 0 as the section enters the viewport, 1 as it leaves
-      var p = (vh - r.top) / (vh + r.height);
-      return Math.max(0, Math.min(1, p));
-    }
-
-    var ticking = false;
-    function onScroll(){
-      if(ticking || reduce) return;
-      ticking = true;
-      requestAnimationFrame(function(){ paint(progress()); ticking = false; });
-    }
-
-    size();
-    paint(reduce ? .5 : progress());
-    if(!reduce) window.addEventListener('scroll', onScroll, {passive:true});
-    window.addEventListener('resize', function(){
-      size(); paint(reduce ? .5 : progress());
-    }, {passive:true});
-  })();
-
-  /* ── TRACK panels: warm light follows the pointer (fine pointers only) ── */
-  if(window.matchMedia('(hover:hover) and (pointer:fine)').matches){
-    document.querySelectorAll('.track').forEach(function(t){
-      t.addEventListener('pointermove', function(e){
-        var r = t.getBoundingClientRect();
-        t.style.setProperty('--mx', (e.clientX - r.left) + 'px');
-        t.style.setProperty('--my', (e.clientY - r.top)  + 'px');
-      });
-    });
-  }
+  /* The .track pointer-follow light was removed with the panels it lit.
+     It was a hover treatment on an <article> with nothing to click, which
+     promises an interaction that does not exist. */
 })();

@@ -30,7 +30,7 @@ dark neutral. Every value is derived from melton-wool jacket materials.
 | Token | Hex | Role |
 |---|---|---|
 | `--wool-deep` | `#6E120E` | dark melton, jacket in shadow; section gradient ends |
-| `--wool` | `#8E1B14` | jacket body — the primary field (hero, season, close) |
+| `--wool` | `#8E1B14` | jacket body, the primary field (hero, season, close). Grounds alternate leather / wool down the page; two of the same in a row loses the fold between them |
 | `--ember` | `#C4442A` | chenille letter face; hover accents, list bullets |
 | `--bullion` | `#E0A33C` | gold bullion thread — primary CTA, numerals, focus ring |
 | `--bone` | `#F2E6D4` | chain-stitch thread — primary text on all grounds |
@@ -126,8 +126,16 @@ mark sits in this palette without adjustment.
   `.ghost` variant for secondary actions. Min height 48px.
 - **`.disc-row`** — full-width accordion row; display-scale name, mono metadata,
   circular chevron that fills bullion when open. Hover translates 12px on X.
-- **`.track`** — the two audience panels. One wool-filled (students, primary),
-  one outlined (sponsors). Pointer-follow warm light on fine pointers only.
+- **`.deal`** — the How to Join trade, as two plain columns rather than cards.
+  It replaced four numbered step cards and two bordered panels. The steps
+  restated calendar legs 1-3 verbatim; the panels carried kicker labels above
+  their headings, which is a banned pattern; and their checkmark bullets put a
+  tick beside "we take attendance", which reads as a perk when it is an
+  obligation. What survives is the only thing the section knows that the rest
+  of the page does not: what it costs you and what you get. One dashed seam
+  between the columns, no borders, no numerals, no ticks. The pointer-follow
+  light went with the panels; it was a hover treatment on an element with
+  nothing to click.
 - **`.legs`** — season schedule with a bullion thread that draws down on scroll
   and diamond nodes at each leg.
   The same stops are duplicated in the `stops` array in `main.js` for the
@@ -147,95 +155,41 @@ mark sits in this palette without adjustment.
 
 ## Motion
 
-One orchestrated moment plus restrained scroll response. Every effect fires
-once and then holds still — nothing loops in peripheral vision.
+One authored moment, and everything else earns its place by doing a job.
 
-- **Falcon flight** (the signature moment, and the first thing on the page):
-  the hero *is* the runway. `.hero` is 260vh tall and `.hero-stage` is
-  `position: sticky`, so the crest, headline and actions hold still while
-  scroll position 0..1 scrubs the school logo across the canvas behind them —
-  the Apple product-page mechanic. The mark banks along its arc, pulses ±3.5%
-  on a 3.5-cycle beat so it reads as flying rather than sliding, carries a soft
-  drop shadow, and stitches a dashed gold thread tracing the path already
-  flown. The arc is tuned per breakpoint: a tall sweep on desktop, flattened
-  into the top band on phones where the copy fills the middle. Repainted inside
-  `requestAnimationFrame`, DPR-capped at 2. Under reduced motion the hero
-  collapses to one ordinary viewport and a single still frame renders.
-- **Patch stitch-on** (page load): felt backing → merrow edge → chenille letter
-  drops in → arced lettering → season bar. Staggered 80ms–1000ms.
-- **Patch settle** (hero scroll): the crest drifts down, scales to 0.93, and
-  fades to 45% as you leave the hero. `rAF`-throttled, ≥700px only.
-- **Heading word wipe**: `.h2` words are split and rise out of their own line
-  box with a 2° rotation, staggered 55ms, once per heading on intersection.
-  The split pass strips `rv` from the heading, so the word wipe is that
-  heading's only entrance — a block that fades and rises while its own words
-  fade and rise reads as mush rather than one gesture.
-- **Season strip**: each calendar stop lifts in sequence (70ms stagger) on
-  entry, then stops. Static and scannable, never auto-scrolling.
-- **Scroll progress**: a 3px ember→bullion thread across the top, `scaleX`.
-- **Scroll reveals**: 26px rise + fade, staggered by `data-d` 1–3. Armed only
-  behind a `.js` class on `<html>`, set by an inline `<head>` script so the
-  JS-only states apply before first paint instead of flashing open and then
-  collapsing. With JS off the class never lands: reveals render visible, the
-  event accordions render open, and the JS-built season strip is hidden
-  rather than showing as an empty bordered bar.
-- **Gallery patches sewn down**: each `.shot` enters in three beats — the frame
-  clips open (780ms), the basting stitch pulls tight from 18px to its final
-  7px inset (550ms, +260ms), then the caption settles (450ms, +400ms). The
-  wipe direction follows the layout: paired figures in a row open toward each
-  other, and the full-width closing band opens from its centre outward. It
-  deliberately does not reuse the crest's fade-and-scale mechanism — the hero
-  keeps sole ownership of that. Runs on the existing `.rv` observer, so each
-  figure fires on its own and the closing band never animates below the fold.
-  No new observer and no new script.
-- **Keep-scrolling cue**: a bullion chain stitch above the knit hem, shown only
-  at scroll position 0 and removed permanently on the first scroll. It exists
-  because the runway holds the copy still for 1.6 viewports, which without a
-  signal reads as a stuck page. Three plays maximum, then gone; hidden under
-  600px of viewport height so it cannot collide with the copy.
-- **Season thread** and **counters** fire once on intersection. Counters split
-  by kind: plain cardinals (15, 4) count up, because every intermediate value
-  is a smaller true number. Prefixed values (`data-prefix` "3–", "Top ") never
-  count — a range and a threshold ticked through render "3–1" and "Top 7",
-  which are false statements rather than smaller numbers. Those arrive whole
-  on a 520ms stitch-in.
-- **FAQ disclosure**: native `<details>`; body fades and slides 8px on open.
-- Never `linear`. Accordion height animates via `grid-template-rows`.
-- `prefers-reduced-motion` fully honored: all of the above become static.
+The site previously ran fourteen separate motion systems: a scroll-progress
+thread, a per-word wipe on every heading, a 26px fade-and-rise on twenty-five
+elements, count-up numerals, a canvas halftone field, and a date ticker. Both
+the impeccable craft floor and ui-ux-pro-max name the same limit ("animate 1-2
+key elements per view", severity High), and one identical entrance on every
+section is the most recognisable generated-site behaviour there is. All of it
+is gone.
 
-## Anchor scrolling
+What is left:
 
-In-page links glide rather than jump, but CSS `scroll-behavior:smooth` is
-deliberately not used: native smooth scroll has no duration control, so with a
-tall sticky runway in the page a hero-to-FAQ jump crawls through all of it.
-`main.js` animates instead, on a duration capped at 420–900ms, so a
-five-screen jump feels much like a one-screen jump. Easing is easeOutQuint,
-the same fast-out long-settle shape as `--ease`.
+- **The hero.** The falcon flight is the signature. `.hero` is 190vh and
+  `.hero-stage` is `position: sticky`, so scroll position 0..1 scrubs the
+  school mark across a canvas behind pinned copy. It banks along its arc,
+  pulses on a 3.5-cycle beat, and stitches a dashed gold thread tracing the
+  path already flown. Around it the crest stitches itself on at load, the copy
+  yields downward only while the bird is overhead, the crest settles as you
+  leave, and a chain-stitch cue plays three times at most to say the hold is
+  deliberate. Those read as one moment, not five. Repainted inside
+  `requestAnimationFrame`, DPR-capped at 2.
+- **Season thread.** A bullion line draws down the calendar, once, on entry.
+- **Gallery.** Each `.sew` figure clips open (780ms), its basting stitch pulls
+  tight from 18px to its final 7px inset (550ms, +260ms), then the caption
+  settles (450ms, +400ms). The wipe direction follows the layout: paired
+  figures open toward each other, the full-width closing band opens from its
+  centre. This is the only scroll-triggered entrance left on the site.
+- **Accordion.** Height animates via `grid-template-rows`, never `max-height`.
+- **Anchor glide.** Capped duration, aborts on user scroll. See below.
+- **Nav menu.** `grid-template-rows` again, with `visibility` so closed links
+  leave the tab order.
 
-Three things the glide does beyond moving the page: it offsets the landing so
-the target clears the fixed bar instead of sitting under it, it moves focus to
-the landed section so keyboard and screen-reader users actually arrive where
-the link promised, and it aborts on the first wheel, touch, or key press,
-because a page that fights the reader's own scroll is worse than one that
-jumps. Under reduced motion it is an instant jump with the same offset and the
-same focus move. `scroll-margin-top` covers arriving on a hash URL directly,
-where the browser scrolls and no script is involved.
-
-## Navigation
-
-The bar is a three-column grid (`1fr auto 1fr`) with columns pinned explicitly,
-so the link row sits on the true page centre rather than on the midpoint
-between a wide wordmark and a narrow button.
-
-Below 900px the links become a real disclosure panel: a labelled toggle with
-`aria-expanded` / `aria-controls`, height animated via `grid-template-rows`
-(the same mechanism as the event accordion, never `max-height`), closed with
-`visibility:hidden` so the links leave the tab order rather than staying
-focusable inside a collapsed box, Escape to close, close on navigate, and
-release on resize. With JS off the panel is never collapsed at all: the links
-wrap onto a second row. Nothing is ever hidden behind a control that cannot
-open. They were previously `display:none` with no replacement, which made
-About, the calendar, and the FAQ unreachable on a phone.
+Never `linear`. `prefers-reduced-motion` is honoured explicitly, element by
+element, rather than by a blanket duration override, so nothing can be left
+clipped shut or invisible when a transition never runs.
 
 ## Responsive
 
