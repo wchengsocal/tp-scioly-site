@@ -1,8 +1,8 @@
 /* ═══════════════════════════════════════════════════════════════
-   TORREY PINES SCIENCE OLYMPIAD — VARSITY CHENILLE
+   TORREY PINES SCIENCE OLYMPIAD, VARSITY CHENILLE
    Palette derived from a melton-wool letterman jacket:
      #6E120E  wool-deep    dark melton, the jacket in shadow
-     #8E1B14  wool         the body of the jacket — primary field
+     #8E1B14  wool         the body of the jacket, primary field
      #C4442A  ember        chenille letter face / warm autumn red
      #E0A33C  bullion      gold bullion thread, medal metal
      #F2E6D4  bone         chain-stitch thread, cream twill
@@ -19,30 +19,49 @@
 
   --bone-dim:#C8B49A;          /* bone at rest on leather */
   --wool-tint:#E5C4B8;         /* bone tinted from the wool hue */
+  /* Bullion is the accent, but at 11-12px on a wool ground it computes to
+     4.09:1 and fails AA. This is the same gold lifted until it clears 4.5:1
+     on every wool stop the page uses, including the hero radial's lightest
+     #A32218. Base --bullion stays for large text, rules, and fills. */
+  --bullion-ink:#F5CE86;
   --stitch:rgba(242,230,212,.22);
   --stitch-strong:rgba(242,230,212,.42);
 
   /* ── TYPE SYSTEM ──────────────────────────────────────────────
-     One serif against four sans faces, each with one job. They only
+     One serif against three sans faces, each with one job. They only
      read as a system because the roles never overlap:
-       Georgia   display    headlines — serif, mixed case, high contrast
-       Inter     body       running prose — the most readable at 16-18px
-       DM Sans   ui         labels, nav, buttons — wide-tracked caps
-       Roboto    data       dates, counters, tabular figures
-       Poppins   accent     the closing call, used sparingly
+       Libre Baskerville  display  headlines, serif, mixed case
+       Inter              body     running prose, most readable at 16-18px
+       DM Sans            ui       labels, nav, buttons, wide-tracked caps
+       Roboto             data     dates, counters, tabular figures
      ─────────────────────────────────────────────────────────── */
-  /* Georgia: a serif with real weight in its bowls, set in mixed case.
-     It reads like the lettering on a varsity award certificate rather
-     than a modern grotesque. Bold, not 800 — Georgia has no 800. */
-  --display:Georgia, 'Times New Roman', serif;
+  /* Baskerville is the classic diploma and certificate face, and Libre
+     Baskerville is the screen cut of it: sturdy bowls and a high x-height,
+     so it holds up at headline weight the way Georgia did. It ships 400/700
+     and nothing heavier, which is exactly the range used here. Georgia stays
+     as the fallback because the two are metrically close, so a slow font
+     swap shifts shapes rather than reflowing the page. */
+  --display:'Libre Baskerville', Georgia, 'Times New Roman', serif;
   --body:'Inter', system-ui, sans-serif;
   --ui:'DM Sans', system-ui, sans-serif;
   --data:'Roboto', system-ui, sans-serif;
-  --accent:'Poppins', system-ui, sans-serif;
 
   /* `--mono` kept as an alias so existing label rules keep working;
      it now points at the UI face rather than a monospace. */
   --mono:var(--ui);
+
+  /* ── TYPE SCALE ───────────────────────────────────────────────
+     Named for the job, not the value. Before this existed the label
+     role alone was set at .68/.70/.72/.73/.74/.75rem across seventeen
+     selectors, a 1.1px spread that read as drift, not hierarchy.
+     Two label steps and two prose steps carry all of it. */
+  --fs-micro:.62rem;      /* nav step-downs only, below the label steps */
+  --fs-label-sm:.70rem;   /* quietest metadata: kickerless captions, footer */
+  --fs-label:.74rem;      /* the standard wide-tracked cap label */
+  --fs-btn:.80rem;        /* sewn-label buttons */
+  --fs-note:.88rem;       /* skip link, privacy notice */
+  --fs-prose-sm:.96rem;   /* dense supporting prose in cards and steps */
+  --fs-prose:1rem;        /* running prose inside sections */
 
   --ease:cubic-bezier(.22,1,.36,1);
   --gutter:clamp(20px, 5vw, 72px);
@@ -50,7 +69,22 @@
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+/* No CSS smooth scroll on purpose. Native smooth has no duration control, so
+   with a tall sticky runway in the page an anchor jump crawls through all of
+   it. main.js glides on a capped duration instead. Setting it here as well
+   would fight that, because the glide steps with plain scrollTo. */
+html{-webkit-text-size-adjust:100%}
+
+/* Anchor targets clear the fixed bar. The glide applies the same offset
+   itself; this covers arriving on a hash URL directly, where the browser
+   does the scrolling and no script is involved. */
+section[id],header[id],main[id],div[id]{scroll-margin-top:clamp(72px,9vh,96px)}
+/* Focus is moved to the landed section for keyboard users, but a scroll
+   destination is not a control, so it gets no ring. tabindex="-1" is only
+   ever set by the glide, so this cannot swallow a real control's focus
+   state. Written unscoped because <main> is itself a target, via the skip
+   link, and a descendant selector would have ringed the whole page. */
+[tabindex="-1"]:focus{outline:none}
 body{
   background:var(--leather);
   color:var(--bone);
@@ -67,15 +101,6 @@ body{
 }
 img,svg{max-width:100%;display:block}
 ::selection{background:var(--bullion);color:var(--leather)}
-
-/* ── chain-stitch: the signature seam, used as a real border ── */
-.stitched{
-  position:relative;
-}
-.stitched::after{
-  content:'';position:absolute;inset:8px;pointer-events:none;
-  border:1.5px dashed var(--stitch-strong);border-radius:inherit;
-}
 
 /* ── felt grain: subtle woven noise over wool fields ── */
 .felt{position:relative;isolation:isolate}
@@ -101,7 +126,7 @@ img,svg{max-width:100%;display:block}
 }
 
 /* ═══ FALCON MARK ═══
-   The school logo, used as a real asset. Never traced or recolored —
+   The school logo, used as a real asset. Never traced or recolored,
    the file is the mark. */
 .mark-patch{
   width:44px;height:auto;flex:none;
@@ -113,19 +138,55 @@ img,svg{max-width:100%;display:block}
 .skip{
   position:absolute;left:-9999px;top:0;z-index:999;
   background:var(--bullion);color:var(--leather);
-  padding:12px 20px;font-family:var(--mono);font-size:.85rem;font-weight:600;
+  padding:12px 20px;font-family:var(--mono);font-size:var(--fs-note);font-weight:600;
 }
 .skip:focus{left:12px;top:12px}
 
-/* ═══ NAV — a sewn label bar ═══ */
+/* ═══ NAV, a sewn label bar ═══ */
+/* Three columns, not space-between. With space-between the links centre on
+   the gap between the wordmark and the button, and because the wordmark is
+   far the wider of the two that midpoint sits well right of the page centre.
+   Equal 1fr side columns put the link row on the true centre line and keep
+   it there no matter what the wordmark or the button grow to. */
 .nav{
   position:fixed;top:0;left:0;right:0;z-index:90;
-  display:flex;align-items:center;justify-content:space-between;
+  display:grid;grid-template-columns:1fr auto 1fr;
+  align-items:center;
   gap:16px;padding:14px var(--gutter);
   background:rgba(36,21,18,0);
   border-bottom:1px solid transparent;
   transition:background .5s var(--ease), border-color .5s var(--ease);
 }
+/* Columns pinned explicitly, never left to auto-placement: below 900px the
+   link list is display:none and stops being a grid item, so an auto-placed
+   button would slide into the empty middle column and sit centred. */
+.nav .mark{grid-column:1;justify-self:start}
+.nav .nav-panel{grid-column:2;justify-self:center}
+.nav .nav-end{grid-column:3;justify-self:end;display:flex;align-items:center;gap:10px}
+
+/* ── Menu toggle: hidden on desktop, the only nav on a phone ── */
+.nav-toggle{
+  display:none;align-items:center;gap:8px;
+  min-height:44px;min-width:44px;padding:10px 12px;
+  background:transparent;border:1px solid var(--stitch-strong);
+  color:var(--bone);cursor:pointer;
+  font-family:var(--ui);font-size:var(--fs-micro);font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;
+  transition:border-color .3s var(--ease), color .3s var(--ease);
+}
+.nav-toggle svg{
+  width:19px;height:19px;flex:none;
+  fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;
+}
+.nav-toggle:hover,.nav-toggle:focus-visible{border-color:var(--bullion);color:var(--bullion)}
+.nav-toggle svg path{transition:transform .35s var(--ease), opacity .25s var(--ease);transform-origin:center}
+.nav[data-menu="open"] .nav-toggle svg path:nth-child(1){transform:translateY(5px) rotate(45deg)}
+.nav[data-menu="open"] .nav-toggle svg path:nth-child(2){opacity:0}
+.nav[data-menu="open"] .nav-toggle svg path:nth-child(3){transform:translateY(-5px) rotate(-45deg)}
+
+/* The current page, announced by aria-current and now visible too. */
+.nav-links a[aria-current="page"]{color:var(--bone)}
+.nav-links a[aria-current="page"]::after{right:0}
 .nav.pinned{
   background:rgba(36,21,18,.94);
   border-bottom-color:var(--stitch);
@@ -137,7 +198,7 @@ img,svg{max-width:100%;display:block}
   text-decoration:none;color:var(--bone);
 }
 .mark-txt{
-  font-family:var(--mono);font-size:.7rem;font-weight:600;
+  font-family:var(--mono);font-size:var(--fs-label-sm);font-weight:600;
   letter-spacing:.19em;text-transform:uppercase;line-height:1.25;
   color:var(--bone-dim);
 }
@@ -145,7 +206,7 @@ img,svg{max-width:100%;display:block}
 
 .nav-links{display:flex;align-items:center;gap:clamp(14px,2.2vw,30px);list-style:none}
 .nav-links a{
-  font-family:var(--mono);font-size:.74rem;font-weight:500;
+  font-family:var(--mono);font-size:var(--fs-label);font-weight:500;
   letter-spacing:.13em;text-transform:uppercase;
   color:var(--bone-dim);text-decoration:none;
   padding:8px 2px;position:relative;transition:color .3s var(--ease);
@@ -158,7 +219,7 @@ img,svg{max-width:100%;display:block}
 .nav-links a:hover::after,.nav-links a:focus-visible::after{right:0}
 
 .nav-cta{
-  font-family:var(--mono);font-size:.74rem;font-weight:600;
+  font-family:var(--mono);font-size:var(--fs-label);font-weight:600;
   letter-spacing:.12em;text-transform:uppercase;
   background:var(--bullion);color:var(--leather);
   padding:11px 18px;text-decoration:none;
@@ -169,31 +230,69 @@ img,svg{max-width:100%;display:block}
 .nav-cta:hover,.nav-cta:focus-visible{background:transparent;color:var(--bullion)}
 
 @media(max-width:900px){
-  .nav-links{display:none}
+  .nav-toggle{display:inline-flex}
+
+  /* With JS off the links simply wrap onto a second row and stay usable.
+     Nothing is ever hidden behind a control that cannot open. */
+  .nav .nav-panel{grid-column:1 / -1;grid-row:2;justify-self:stretch}
+  .nav .nav-links{
+    flex-wrap:wrap;justify-content:center;margin-top:10px;
+  }
+
+  /* With JS it becomes a real disclosure panel under the bar. The height
+     animates via grid-template-rows, the same mechanism the event accordion
+     uses, rather than max-height, which the detector correctly flags as a
+     layout-thrashing transition. Closed also sets visibility:hidden so the
+     links leave the tab order instead of staying focusable inside a
+     collapsed box. */
+  .js .nav .nav-panel{
+    position:absolute;top:100%;left:0;right:0;
+    background:rgba(36,21,18,.985);
+    border-bottom:1px solid var(--stitch);
+    display:grid;grid-template-rows:0fr;visibility:hidden;
+    transition:grid-template-rows .42s var(--ease), visibility .42s var(--ease);
+  }
+  .js .nav[data-menu="open"] .nav-panel{grid-template-rows:1fr;visibility:visible}
+  .js .nav .nav-links{
+    grid-column:auto;grid-row:auto;margin-top:0;
+    display:block;overflow:hidden;padding:0 var(--gutter);
+  }
+  .js .nav-links li + li{border-top:1px dashed var(--stitch)}
+  .js .nav-links a{
+    display:flex;align-items:center;min-height:52px;padding:6px 0;
+    font-size:var(--fs-label);
+  }
+  .js .nav-links a::after{display:none}
+}
+@media(max-width:900px) and (prefers-reduced-motion:reduce){
+  .js .nav .nav-panel{transition:none}
 }
 @media(max-width:560px){
-  .mark-txt{font-size:.62rem;letter-spacing:.14em}
-  .nav-cta{padding:10px 12px;font-size:.66rem;letter-spacing:.08em}
-  .mark-patch{width:26px;height:30px;font-size:.85rem}
+  .mark-txt{font-size:var(--fs-micro);letter-spacing:.14em}
+  .nav-cta{padding:10px 12px;font-size:var(--fs-micro);letter-spacing:.08em}
+  /* height:auto, never a fixed pair, the mark is 448x248, so forcing 30px
+     against a 26px width stretched the falcon to twice its height. The
+     file is the mark; it does not get reshaped to fit a slot. */
+  .mark-patch{width:26px;height:auto}
 }
 @media(max-width:380px){
   .mark-txt{
     /* the second line carries the name; the school fits on the patch */
-    font-size:.6rem;
+    font-size:var(--fs-micro);
   }
   .mark-txt span{display:none}
   .nav{padding:12px 14px;gap:10px}
-  .nav-cta{padding:10px 10px;font-size:.62rem}
+  .nav-cta{padding:10px 10px;font-size:var(--fs-micro)}
 }
 
-/* ═══ HERO — the jacket back, and the falcon's runway ═══
+/* ═══ HERO, the jacket back, and the falcon's runway ═══
    The hero is taller than the viewport: its extra height is the scroll
    distance the falcon flight is scrubbed across. The content itself is
    pinned with `position:sticky`, so the copy holds still while the mark
    flies behind it, then the whole thing scrolls away as one. */
 .hero{
   position:relative;
-  height:260vh;                 /* 1 viewport of hero + 1.6 of runway */
+  height:190vh;                 /* 1 viewport of hero + 0.9 of runway */
   background:
     radial-gradient(120% 90% at 50% 8%, #A32218 0%, var(--wool) 42%, var(--wool-deep) 100%);
 }
@@ -221,16 +320,14 @@ img,svg{max-width:100%;display:block}
   will-change:transform;
 }
 @media (prefers-reduced-motion:reduce){
-  /* No flight, so nothing to yield to — the copy holds its resting place. */
+  /* No flight, so nothing to yield to, the copy holds its resting place,
+     and the runway collapses to one ordinary screen. */
   .hero-body{transform:none}
-}
-/* No runway when motion is reduced — the hero is one ordinary screen. */
-@media (prefers-reduced-motion:reduce){
   .hero{height:auto}
   .hero-stage{position:relative;height:auto;min-height:100svh}
 }
 /* The badge sits low enough that the falcon's arc passes above it rather
-   than through it — the margin is what buys that clearance on short
+   than through it, the margin is what buys that clearance on short
    viewports, where the arc has least room to work with. */
 .crest{
   width:min(268px, 56vw, 30vh);height:auto;margin-inline:auto;
@@ -252,7 +349,7 @@ img,svg{max-width:100%;display:block}
   font-family:var(--display);font-weight:700;
   /* vmin, not vw: on a short wide screen (a Chromebook) the headline has to
      answer to the height it has, not just the width. Only this headline
-     shrinks — the subtext and labels below keep their sizes. */
+     shrinks, the subtext and labels below keep their sizes. */
   font-size:clamp(1.75rem,1.05rem + 3.1vmin,3.5rem);
   line-height:1.04;letter-spacing:-.012em;
   color:var(--bone);
@@ -260,12 +357,18 @@ img,svg{max-width:100%;display:block}
   text-shadow:0 2px 0 rgba(36,21,18,.28);
   text-wrap:balance;
 }
-.hero-title .thin{
-  display:block;font-family:var(--body);font-weight:400;
+/* Its own element, not a span inside the h1. Nested there it inherited the
+   headline's 15ch box, a child max-width can never exceed its parent's
+   content box, so this paragraph set to roughly 25 characters a line on a
+   phone regardless of the 40ch it asked for. Out here it gets a real
+   measure, and the h1 is a heading again rather than a 40-word one. */
+.hero-sub{
+  font-family:var(--body);font-weight:400;
   font-size:clamp(.98rem,.92rem + .34vw,1.18rem);
-  letter-spacing:.01em;text-transform:none;line-height:1.55;
-  color:var(--wool-tint);max-width:40ch;margin:clamp(14px,2vh,20px) auto 0;
-  text-shadow:none;text-wrap:balance;
+  letter-spacing:.01em;line-height:1.62;
+  color:var(--wool-tint);
+  max-width:46ch;margin:clamp(14px,2vh,20px) auto 0;
+  text-wrap:pretty;
 }
 .hero-actions{
   margin-top:clamp(24px,4vh,40px);
@@ -279,7 +382,7 @@ img,svg{max-width:100%;display:block}
   min-height:48px;padding:13px 26px;
   background:var(--lb-bg);color:var(--lb-fg);
   border:1.5px solid var(--lb-edge);
-  font-family:var(--mono);font-weight:600;font-size:.8rem;
+  font-family:var(--mono);font-weight:600;font-size:var(--fs-btn);
   letter-spacing:.13em;text-transform:uppercase;text-decoration:none;
   transition:transform .4s var(--ease), box-shadow .4s var(--ease),
              background .3s var(--ease), color .3s var(--ease);
@@ -310,11 +413,11 @@ img,svg{max-width:100%;display:block}
   margin-top:clamp(20px,3vh,30px);
   display:flex;flex-wrap:wrap;justify-content:center;align-items:center;
   gap:8px clamp(12px,2vw,20px);
-  font-family:var(--mono);font-size:.72rem;letter-spacing:.11em;
+  font-family:var(--mono);font-size:var(--fs-label);letter-spacing:.11em;
   text-transform:uppercase;color:var(--wool-tint);
 }
 .hero-next-k{
-  color:var(--bullion);border:1px solid rgba(224,163,60,.5);
+  color:var(--bullion-ink);border:1px solid rgba(245,206,134,.55);
   padding:4px 9px;
 }
 .hero-next-v b{
@@ -323,13 +426,18 @@ img,svg{max-width:100%;display:block}
 }
 
 /* ── SEASON STRIP: the whole calendar at a glance, static and scannable.
-      Each stop lights in sequence once, on entry — then it holds still. ── */
+      Each stop lights in sequence once, on entry, then it holds still. ── */
 .marquee{
+  /* The stops are built in main.js, so with JS off this would render as an
+     empty bordered bar. No script, no strip, the season section below
+     carries the same dates in full. */
+  display:none;
   position:relative;z-index:2;
   background:var(--leather);
   border-block:1px solid var(--stitch);
   padding:14px var(--gutter);
 }
+.js .marquee{display:block}
 .marquee-track{
   display:flex;flex-wrap:wrap;justify-content:center;
   gap:10px clamp(14px,2.2vw,26px);
@@ -337,7 +445,7 @@ img,svg{max-width:100%;display:block}
 }
 .marquee-item{
   display:flex;align-items:baseline;gap:9px;
-  font-family:var(--mono);font-size:.73rem;letter-spacing:.11em;
+  font-family:var(--mono);font-size:var(--fs-label);letter-spacing:.11em;
   text-transform:uppercase;color:var(--bone-dim);white-space:nowrap;
 }
 .marquee-item b{
@@ -364,12 +472,12 @@ img,svg{max-width:100%;display:block}
    The hero has a fixed budget: nav + badge + headline + subtext + actions
    + dates + hem must fit one screen. On a short screen everything scales
    down together so the hem stays on-screen and the dates keep their
-   breathing room above it — rather than the bottom rows being pushed off. */
+   breathing room above it, rather than the bottom rows being pushed off. */
 @media (max-height: 860px) and (min-width: 700px){
   .crest{width:min(196px,38vw,23vh);margin-top:clamp(28px,4vh,56px)}
   .hero-title{font-size:clamp(1.6rem,.95rem + 2.6vmin,2.9rem)}
   .hero-body{padding-top:0;padding-bottom:clamp(16px,2.6vh,26px)}
-  .hero-body .thin{font-size:.95rem}
+  .hero-sub{font-size:var(--fs-prose-sm)}
   .hero-actions{margin-top:clamp(18px,2.6vh,26px)}
   .hero-next{margin-top:clamp(16px,2.4vh,24px)}
 }
@@ -377,7 +485,6 @@ img,svg{max-width:100%;display:block}
   .crest{width:min(148px,30vw,19vh);margin-top:clamp(22px,3vh,44px)}
   .hero-title{font-size:clamp(1.45rem,.9rem + 2.2vmin,2.4rem)}
   .hero-body{padding-top:0}
-  .hero-body .thin{font-size:.9rem}
 }
 
 /* Phones: the same budget, tighter. The hem must stay on screen, so the
@@ -393,7 +500,7 @@ img,svg{max-width:100%;display:block}
   .crest{width:min(98px,22vw);margin-top:clamp(16px,2.5vh,32px)}
   .hero-title{font-size:clamp(1.2rem,.9rem + 2.4vmin,1.6rem)}
   .hero-body{padding-top:0;padding-bottom:clamp(10px,1.8vh,16px)}
-  .hero-body .thin{font-size:.86rem}
+  .hero-sub{font-size:var(--fs-note)}
   .hero-actions{margin-top:clamp(12px,1.8vh,18px)}
   .hero-next{margin-top:clamp(10px,1.6vh,16px)}
 }
@@ -401,7 +508,7 @@ img,svg{max-width:100%;display:block}
 /* jacket knit hem at the bottom of the hero */
 .hem{
   position:relative;z-index:2;
-  /* border-box so the 2px top border stays inside the hem's height —
+  /* border-box so the 2px top border stays inside the hem's height,
      otherwise the stage overflows its 100svh by the border width. */
   box-sizing:border-box;
   height:clamp(52px,7vh,74px);
@@ -421,6 +528,33 @@ img,svg{max-width:100%;display:block}
 .hem-band.a{top:14px}
 .hem-band.b{bottom:14px}
 
+/* ═══ KEEP-SCROLLING CUE ═══
+   A chain stitch running off the fold, sitting just above the knit hem.
+   Armed by JS only at scroll position 0 and removed on the first scroll,
+   it plays three times at most and then is gone for the session. */
+.cue{
+  position:absolute;left:0;right:0;z-index:3;
+  bottom:calc(clamp(52px,7vh,74px) + 16px);
+  display:flex;justify-content:center;
+  pointer-events:none;
+}
+.cue span{
+  display:block;width:2px;height:26px;
+  background:repeating-linear-gradient(180deg,
+    var(--bullion) 0 5px, transparent 5px 10px);
+  opacity:0;
+}
+.js .hero[data-cue] .cue span{animation:cueStitch 2s var(--ease) 3}
+/* On short viewports the copy runs close to the hem, drop the cue rather
+   than let it collide with the last line. */
+@media (max-height:600px){.cue{display:none}}
+@keyframes cueStitch{
+  0%  {opacity:0;  transform:translateY(-12px) scaleY(.45)}
+  22% {opacity:.95}
+  72% {opacity:.95}
+  100%{opacity:0;  transform:translateY(15px)  scaleY(1)}
+}
+
 /* ═══ SECTION SHELL ═══ */
 .shell{max-width:1240px;margin-inline:auto;padding:clamp(64px,9vw,124px) var(--gutter)}
 .h2{
@@ -435,7 +569,7 @@ img,svg{max-width:100%;display:block}
 }
 .on-wool .lede{color:var(--wool-tint)}
 
-/* ═══ ROSTER — the printed program, three disciplines ═══ */
+/* ═══ ROSTER, the printed program, three disciplines ═══ */
 .roster{background:var(--leather)}
 .roster-head{
   display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.85fr);
@@ -457,7 +591,7 @@ img,svg{max-width:100%;display:block}
 }
 .disc-row:hover{transform:translateX(12px)}
 .disc-num{
-  font-family:var(--mono);font-size:.74rem;font-weight:600;
+  font-family:var(--mono);font-size:var(--fs-label);font-weight:600;
   letter-spacing:.16em;color:var(--bullion);
 }
 .disc-name{
@@ -469,7 +603,7 @@ img,svg{max-width:100%;display:block}
 }
 .disc-row:hover .disc-name{color:var(--ember)}
 .disc-meta{
-  font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;
+  font-family:var(--mono);font-size:var(--fs-label);letter-spacing:.14em;
   text-transform:uppercase;color:var(--bone-dim);
   display:flex;align-items:center;gap:14px;
 }
@@ -482,14 +616,21 @@ img,svg{max-width:100%;display:block}
 .disc-chev svg{width:11px;height:11px;stroke:var(--bone);stroke-width:2.2;fill:none}
 .disc-row[aria-expanded="true"] .disc-chev svg{stroke:var(--leather)}
 @media(max-width:640px){
-  .disc-meta span{display:none}
+  /* the count only. .disc-chev is also a span child, and hiding it stripped
+     the one open/closed affordance the accordion has on a phone. */
+  .disc-meta > span:not(.disc-chev){display:none}
 }
 
+/* Open by default, so with JS off the 22 events, the core content of this
+   page, are readable rather than sealed behind an accordion that can never
+   open. The `.js` class collapses them only once the script that can reopen
+   them is confirmed to be running. */
 .disc-panel{
-  display:grid;grid-template-rows:0fr;
+  display:grid;grid-template-rows:1fr;
   transition:grid-template-rows .6s var(--ease);
 }
-.disc-panel[data-open]{grid-template-rows:1fr}
+.js .disc-panel{grid-template-rows:0fr}
+.js .disc-panel[data-open]{grid-template-rows:1fr}
 .disc-panel-in{overflow:hidden}
 .event-list{
   list-style:none;
@@ -500,7 +641,7 @@ img,svg{max-width:100%;display:block}
 .event-list li{
   display:flex;align-items:baseline;gap:12px;
   padding:11px 0;border-bottom:1px dotted rgba(242,230,212,.16);
-  font-size:.98rem;
+  font-size:var(--fs-prose);
 }
 .event-list li .bul{
   width:6px;height:6px;flex:none;background:var(--ember);
@@ -508,15 +649,157 @@ img,svg{max-width:100%;display:block}
 }
 .disc-blurb{
   max-width:60ch;color:var(--bone-dim);
-  padding-bottom:clamp(20px,3vw,32px);font-size:1rem;
+  padding-bottom:clamp(20px,3vw,32px);font-size:var(--fs-prose);
 }
-/* Left intentionally empty: holds the breathing room under each event
-   list so the panels keep their rhythm without a line of filler copy. */
-.disc-more{
-  min-height:clamp(14px,2.4vw,26px);
+/* Breathing room under each event list. This used to be an empty <p> in
+   the markup, which is padding wearing a costume and put three blank
+   paragraphs in the accessibility tree. */
+.disc-panel-in{padding-bottom:clamp(14px,2.4vw,26px)}
+
+/* ═══ GALLERY, photographs held the way the jacket holds a patch ═══
+   A third ground tone, darker than the season's wool, so leather → deep
+   wool → wool still steps material and brightness rather than repeating.
+   The spans are authored, not auto-fit: an even grid of identical tiles is
+   the exact look the rest of this page refuses. */
+.gallery{
+  background:
+    radial-gradient(120% 80% at 22% 0%, #7A1611 0%, var(--wool-deep) 58%, #5A0E0B 100%);
+  border-block:1px solid rgba(0,0,0,.35);
+}
+.shots{
+  display:grid;gap:clamp(14px,1.8vw,24px);
+  margin-top:clamp(34px,5vw,56px);
+  /* start, not the default stretch: a stretched figure lets the plate fill
+     the whole row height and pushes its own caption out from under it. */
+  align-items:start;
+}
+.shot{margin:0;min-width:0}
+
+/* The plate: felt behind a merrow edge, with the chain stitch set inside it.
+   When a real image replaces it the frame stays, the figure owns the edge,
+   not the picture, so .shot-img inherits the identical treatment. */
+/* No height:100%, the aspect-ratio sets the height. Height against a
+   stretched grid item is what made the frame swallow its own caption. */
+.shot .plate,.shot .shot-img{
+  width:100%;display:block;
+  aspect-ratio:var(--ar,3/2);
+  border:2px solid var(--bullion);
+  box-shadow:0 3px 0 rgba(36,21,18,.32), 0 14px 30px -14px rgba(0,0,0,.75);
+}
+.shot .shot-img{height:auto;object-fit:cover}
+.shot .plate{
+  position:relative;
+  display:grid;place-content:center;justify-items:center;gap:10px;
+  background:
+    repeating-linear-gradient(38deg,  rgba(0,0,0,.16)       0 1px, transparent 1px 4px),
+    repeating-linear-gradient(-52deg, rgba(255,255,255,.07) 0 1px, transparent 1px 5px),
+    linear-gradient(160deg, #7C1710, #56100C);
+}
+/* chain stitch, inset, the same seam as the patch edge */
+.shot .plate::after{
+  content:'';position:absolute;inset:7px;pointer-events:none;
+  border:1.5px dashed rgba(242,230,212,.30);
+}
+.plate-mark{
+  width:clamp(26px,3.4vw,38px);height:auto;
+  fill:none;stroke:var(--bullion);stroke-width:1.6;
+  stroke-linecap:round;stroke-linejoin:round;opacity:.85;
+}
+.plate-note{
+  font-family:var(--ui);font-size:var(--fs-label-sm);font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--bullion-ink);
+}
+.shot figcaption{
+  margin-top:12px;
+  font-family:var(--ui);font-size:var(--fs-label-sm);font-weight:500;
+  letter-spacing:.06em;line-height:1.5;color:var(--wool-tint);
+}
+.shot figcaption b{
+  display:block;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--bone);margin-bottom:3px;
 }
 
-/* ═══ SEASON — the schedule sewn down the sleeve ═══ */
+/* Lift on hover, matching the sewn-label buttons. Fine pointers only,
+   there is no hover on a phone and a stuck :hover state reads as a bug. */
+@media (hover:hover) and (pointer:fine){
+  .shot .plate,.shot .shot-img{
+    transition:transform .45s var(--ease), box-shadow .45s var(--ease);
+  }
+  .shot:hover .plate,.shot:hover .shot-img{
+    transform:translateY(-4px);
+    box-shadow:0 5px 0 rgba(36,21,18,.32), 0 22px 40px -16px rgba(0,0,0,.8);
+  }
+}
+
+/* ── Sewing a patch down ──────────────────────────────────────────
+   The frame clips open, then the basting stitch pulls tight from a loose
+   18px to its final 7px, then the caption settles. One gesture in three
+   beats. Deliberately NOT the crest's mechanism, that fades and scales
+   its layers, and the hero keeps sole ownership of it.
+
+   Each figure is observed on its own by the existing .rv observer, so the
+   closing band never fires while it is still below the fold. No new
+   observer, no new script.
+
+   The wipe direction follows the layout: paired figures in a row open
+   toward each other, and the full-width closing band opens from its
+   centre outward. */
+.js .shot.rv{opacity:1;transform:none}          /* cancel the generic rise */
+.js .shot.rv .plate,
+.js .shot.rv .shot-img{clip-path:inset(var(--wipe,0 100% 0 0))}
+.js .shot.rv .plate::after{inset:18px;opacity:0}
+.js .shot.rv figcaption{opacity:0;transform:translateY(9px)}
+
+.js .shot.rv.in .plate,
+.js .shot.rv.in .shot-img{
+  clip-path:inset(0 0 0 0);
+  transition:clip-path .78s var(--ease) var(--d,0s);
+}
+.js .shot.rv.in .plate::after{
+  inset:7px;opacity:1;
+  transition:inset .55s var(--ease) calc(var(--d,0s) + .26s),
+             opacity .34s var(--ease) calc(var(--d,0s) + .26s);
+}
+.js .shot.rv.in figcaption{
+  opacity:1;transform:none;
+  transition:opacity .45s var(--ease) calc(var(--d,0s) + .40s),
+             transform .45s var(--ease) calc(var(--d,0s) + .40s);
+}
+
+/* stagger inside a row; the delay rides the same data-d the page already uses */
+.shot{--d:0s}
+.shot[data-d="1"]{--d:.10s}
+
+/* Wipe origins. In the 2-up and 6-col grids the paired figures open toward
+   each other; stacked in one column the same values read as an alternating
+   left/right rhythm down the page, which is why they are not overridden. */
+.shot--lead,.shot--b{--wipe:0 100% 0 0}   /* from the left edge  */
+.shot--a,.shot--c{--wipe:0 0 0 100%}      /* from the right edge */
+.shot--d{--wipe:0 50% 0 50%}              /* from the centre out */
+
+/* One column on phones: every shot gets the same landscape crop so the
+   column reads as a stack rather than a ragged staircase. Ratios are kept
+   wide throughout, the section is a band inside a long page, not a
+   destination gallery, so it should not out-weigh the events list above it. */
+.shot{--ar:3/2}
+.shot--d{--ar:2/1}
+
+@media(min-width:620px){
+  .shots{grid-template-columns:repeat(2,1fr)}
+  .shot--lead,.shot--c,.shot--d{grid-column:span 2}
+  .shot--a,.shot--b{--ar:4/5}
+}
+@media(min-width:940px){
+  .shots{grid-template-columns:repeat(6,1fr)}
+  /* row 1: heavy left · row 2: heavy right · row 3: a wide closing band */
+  .shot--lead{grid-column:span 4;--ar:16/9}
+  .shot--a   {grid-column:span 2;--ar:4/5}
+  .shot--b   {grid-column:span 2;--ar:4/5}
+  .shot--c   {grid-column:span 4;--ar:16/9}
+  .shot--d   {grid-column:span 6;--ar:24/9}
+}
+
+/* ═══ SEASON, the schedule sewn down the sleeve ═══ */
 .season{
   background:
     linear-gradient(180deg, var(--wool-deep) 0%, var(--wool) 45%, var(--wool-deep) 100%);
@@ -551,8 +834,8 @@ img,svg{max-width:100%;display:block}
   border:2px solid var(--bullion);transform:rotate(45deg);
 }
 .leg-when{
-  font-family:var(--data);font-size:.75rem;font-weight:700;
-  letter-spacing:.15em;text-transform:uppercase;color:var(--bullion);
+  font-family:var(--data);font-size:var(--fs-label);font-weight:700;
+  letter-spacing:.15em;text-transform:uppercase;color:var(--bullion-ink);
   font-variant-numeric:tabular-nums;
 }
 .leg h3{
@@ -560,9 +843,9 @@ img,svg{max-width:100%;display:block}
   font-size:clamp(1.14rem,1rem + .62vw,1.48rem);letter-spacing:-.008em;
   margin:6px 0 7px;line-height:1.16;
 }
-.leg p{color:var(--wool-tint);max-width:48ch;font-size:.99rem}
+.leg p{color:var(--wool-tint);max-width:48ch;font-size:var(--fs-prose)}
 
-/* the award panel — bullion numbers, honest about being unverified */
+/* the award panel, bullion numbers, honest about being unverified */
 .awards{
   border:2px solid rgba(242,230,212,.3);
   background:rgba(36,21,18,.34);
@@ -570,7 +853,7 @@ img,svg{max-width:100%;display:block}
   position:relative;
 }
 .awards h3{
-  font-family:var(--mono);font-size:.75rem;font-weight:600;
+  font-family:var(--mono);font-size:var(--fs-label);font-weight:600;
   letter-spacing:.2em;text-transform:uppercase;color:var(--bullion);
   padding-bottom:16px;margin-bottom:6px;border-bottom:1px solid rgba(242,230,212,.22);
 }
@@ -588,19 +871,15 @@ img,svg{max-width:100%;display:block}
 }
 .award-t{
   font-family:var(--ui);font-weight:700;
-  font-size:.95rem;letter-spacing:.02em;color:var(--bone);
+  font-size:var(--fs-prose-sm);letter-spacing:.02em;color:var(--bone);
 }
 .award-t em{
   display:block;font-family:var(--mono);font-style:normal;
-  font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;
+  font-size:var(--fs-label-sm);letter-spacing:.13em;text-transform:uppercase;
   color:var(--wool-tint);margin-top:3px;
 }
-.tbd{
-  margin-top:18px;font-family:var(--mono);font-size:.68rem;
-  letter-spacing:.1em;color:var(--wool-tint);line-height:1.6;
-}
 
-/* ═══ TRACKS — members vs. supporters, two sewn panels ═══ */
+/* ═══ TRACKS, members vs. supporters, two sewn panels ═══ */
 .tracks{background:var(--leather)}
 .track-grid{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
@@ -624,26 +903,29 @@ img,svg{max-width:100%;display:block}
 .track > *{position:relative;z-index:1}
 .track.primary{background:var(--wool);border-color:var(--wool)}
 .track.primary:hover{border-color:var(--bullion)}
+/* Only the filled panel sits on wool; the outlined one is on leather where
+   base bullion already clears AA at 8.1:1. */
+.track.primary .track-kind{color:var(--bullion-ink)}
 .track-kind{
-  font-family:var(--mono);font-size:.7rem;font-weight:600;
+  font-family:var(--mono);font-size:var(--fs-label-sm);font-weight:600;
   letter-spacing:.2em;text-transform:uppercase;color:var(--bullion);
 }
 .track h3{
   font-family:var(--display);font-weight:700;
   font-size:clamp(1.46rem,1.14rem + 1.15vw,2.1rem);line-height:1.08;letter-spacing:-.012em;
 }
-.track p{color:var(--bone-dim);font-size:1rem}
+.track p{color:var(--bone-dim);font-size:var(--fs-prose)}
 .track.primary p{color:var(--wool-tint)}
 .track ul{list-style:none;display:grid;gap:9px;margin-top:2px}
 .track li{
   display:flex;gap:11px;align-items:flex-start;
-  font-size:.96rem;color:var(--bone-dim);
+  font-size:var(--fs-prose-sm);color:var(--bone-dim);
 }
 .track.primary li{color:var(--wool-tint)}
 .track li svg{width:15px;height:15px;flex:none;margin-top:5px;stroke:var(--bullion);stroke-width:2.4;fill:none}
 .track .label-btn{margin-top:auto;align-self:flex-start}
 
-/* ═══ STEPS — the application path, as sewn tabs ═══ */
+/* ═══ STEPS, the application path, as sewn tabs ═══ */
 .steps{
   list-style:none;display:grid;
   grid-template-columns:repeat(auto-fit,minmax(215px,1fr));
@@ -659,7 +941,7 @@ img,svg{max-width:100%;display:block}
 }
 .step:hover{background:linear-gradient(180deg, rgba(224,163,60,.15), transparent 75%)}
 .step-n{
-  font-family:var(--mono);font-size:.72rem;font-weight:600;
+  font-family:var(--mono);font-size:var(--fs-label);font-weight:600;
   letter-spacing:.18em;color:var(--bullion);display:block;margin-bottom:12px;
 }
 .step h3{
@@ -667,14 +949,9 @@ img,svg{max-width:100%;display:block}
   font-size:clamp(1.06rem,.98rem + .42vw,1.28rem);line-height:1.14;
   letter-spacing:-.008em;margin-bottom:9px;
 }
-.step p{color:var(--bone-dim);font-size:.96rem}
+.step p{color:var(--bone-dim);font-size:var(--fs-prose-sm)}
 
-/* ═══ FAQ — chain-stitched disclosure rows ═══ */
-.faq{
-  background:linear-gradient(180deg,var(--wool-deep),var(--wool) 50%,var(--wool-deep));
-  border-block:2px solid rgba(0,0,0,.3);
-}
-.faq .qa-list{margin-top:clamp(30px,4vw,48px)}
+/* ═══ FAQ, chain-stitched disclosure rows ═══ */
 .qa summary{padding-right:clamp(8px,3vw,40px)}
 .qa{border-bottom:1px solid rgba(242,230,212,.28)}
 .qa summary{
@@ -709,15 +986,61 @@ img,svg{max-width:100%;display:block}
   .qa[open] .qa-body{animation:none}
 }
 
-/* ═══ CLOSE — the patch you earn ═══ */
+/* ═══ FAQ PAGE, the same disclosure rows, on sleeve leather ═══
+   The questions moved off the homepage onto faq.html. There they sit on the
+   leather ground between a wool header and a wool close, so the answers are
+   tinted from leather rather than from wool, secondary text always takes
+   its hue from the ground it is on. */
+.faq-page .qa-list{margin-top:clamp(24px,3vw,34px)}
+.faq-page .qa{border-bottom-color:var(--stitch)}
+.faq-page .qa-body p{color:var(--bone-dim)}
+/* Air above the second group heading, the questions below it answer a
+   different moment, and the gap is what says so. */
+.faq-page .qa-group{margin-top:clamp(54px,7vw,88px)}
+
+/* Both groups arrive on one trigger. The wrapper carries .rv but does not
+   animate itself; its rows do, and the two groups run in parallel rather
+   than in sequence, a reader must never be able to scroll past a heading
+   that has not appeared yet and conclude the section is missing. */
+.js .qa-groups.rv{opacity:1;transform:none}
+.js .qa-groups.rv .section-label,
+.js .qa-groups.rv .qa{
+  opacity:0;transform:translateY(16px);
+}
+.js .qa-groups.rv.in .section-label,
+.js .qa-groups.rv.in .qa{
+  opacity:1;transform:none;
+  transition:opacity .65s var(--ease) var(--i,0s),
+             transform .65s var(--ease) var(--i,0s);
+}
+/* Stagger runs within each group, and both groups start together, so the
+   whole list is settled in well under a second. */
+.js .qa-groups .qa-list .qa:nth-child(1){--i:.08s}
+.js .qa-groups .qa-list .qa:nth-child(2){--i:.15s}
+.js .qa-groups .qa-list .qa:nth-child(3){--i:.22s}
+
+@media (prefers-reduced-motion:reduce){
+  .js .qa-groups.rv .section-label,
+  .js .qa-groups.rv .qa{opacity:1;transform:none}
+}
+
+/* ═══ CLOSE, the patch you earn ═══ */
 .close{
   background:var(--leather);
   text-align:center;position:relative;overflow:hidden;
   border-top:2px solid rgba(0,0,0,.3);
 }
+/* The halftone sits behind the copy and never intercepts a click. */
+.dots{
+  position:absolute;inset:0;width:100%;height:100%;
+  display:block;z-index:0;pointer-events:none;
+}
+.close .shell{position:relative;z-index:1}
 .close .shell{max-width:900px}
+/* The closing call is the largest heading on the page, that size is what
+   marks it as the climax. It used to also switch to a fourth typeface for
+   this one element, which read as an inconsistency rather than an accent. */
 .close .h2{
-  font-family:var(--accent);font-weight:700;
   max-width:none;margin-inline:auto;
   font-size:clamp(1.95rem,1.2rem + 3.4vw,3.7rem);
   line-height:1.04;letter-spacing:-.028em;
@@ -725,7 +1048,7 @@ img,svg{max-width:100%;display:block}
 .close .lede{margin-inline:auto;color:var(--bone-dim)}
 .close .hero-actions{margin-top:clamp(26px,4vw,38px)}
 .close-note{
-  margin-top:26px;font-family:var(--mono);font-size:.7rem;
+  margin-top:26px;font-family:var(--mono);font-size:var(--fs-label-sm);
   letter-spacing:.13em;text-transform:uppercase;color:var(--bone-dim);
 }
 
@@ -744,7 +1067,7 @@ img,svg{max-width:100%;display:block}
 /* room under the last row so the privacy bar never sits on a name */
 .officers .shell{padding-bottom:clamp(90px,12vw,150px)}
 .section-label{
-  font-family:var(--ui);font-size:.74rem;font-weight:700;
+  font-family:var(--ui);font-size:var(--fs-label);font-weight:700;
   letter-spacing:.2em;text-transform:uppercase;color:var(--bullion);
   padding-bottom:16px;border-bottom:1px solid var(--stitch-strong);
   margin-bottom:clamp(30px,4.5vw,46px);
@@ -786,7 +1109,7 @@ img,svg{max-width:100%;display:block}
 }
 
 .member-role{
-  font-family:var(--ui);font-size:.7rem;font-weight:700;
+  font-family:var(--ui);font-size:var(--fs-label-sm);font-weight:700;
   letter-spacing:.17em;text-transform:uppercase;color:var(--bullion);
 }
 .member-name{
@@ -815,12 +1138,12 @@ img,svg{max-width:100%;display:block}
 .cookie[data-show]{transform:none}
 .cookie p{
   flex:1 1 260px;margin:0;
-  font-size:.88rem;line-height:1.5;color:var(--bone-dim);
+  font-size:var(--fs-note);line-height:1.5;color:var(--bone-dim);
 }
 .cookie a{color:var(--bullion);text-decoration:underline;text-underline-offset:2px}
 .cookie button{
   flex:none;min-height:44px;padding:11px 22px;cursor:pointer;
-  font-family:var(--ui);font-size:.74rem;font-weight:700;
+  font-family:var(--ui);font-size:var(--fs-label);font-weight:700;
   letter-spacing:.13em;text-transform:uppercase;
   background:var(--bullion);color:var(--leather);
   border:1.5px solid var(--bullion);
@@ -842,19 +1165,19 @@ img,svg{max-width:100%;display:block}
   border-top:1px solid var(--stitch);
 }
 .foot-mono{
-  font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;
+  font-family:var(--mono);font-size:var(--fs-label-sm);letter-spacing:.14em;
   text-transform:uppercase;color:var(--bone-dim);line-height:1.9;
 }
 .foot-links{display:flex;flex-wrap:wrap;gap:20px}
 .foot-links a{
-  font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;
+  font-family:var(--mono);font-size:var(--fs-label);letter-spacing:.14em;
   text-transform:uppercase;color:var(--bone-dim);text-decoration:none;
   padding:6px 0;border-bottom:1px solid transparent;
   transition:color .3s var(--ease), border-color .3s var(--ease);
 }
 .foot-links a:hover,.foot-links a:focus-visible{color:var(--bullion);border-bottom-color:var(--bullion)}
 
-/* ═══ SCROLL PROGRESS — a bullion thread across the top ═══ */
+/* ═══ SCROLL PROGRESS, a bullion thread across the top ═══ */
 .progress{
   position:fixed;top:0;left:0;right:0;height:3px;z-index:120;
   background:linear-gradient(90deg,var(--ember),var(--bullion));
@@ -868,9 +1191,8 @@ img,svg{max-width:100%;display:block}
   /* each word rises out of its own line box */
   clip-path:inset(-18% -6% -18% -6%);
 }
-.crest{will-change:transform,opacity}
 
-/* ═══ REVEAL — only armed once JS confirms it can un-arm them ═══ */
+/* ═══ REVEAL, only armed once JS confirms it can un-arm them ═══ */
 .js .rv{opacity:0;transform:translateY(26px);
     transition:opacity .85s var(--ease), transform .85s var(--ease)}
 .js .rv.in{opacity:1;transform:none}
@@ -893,4 +1215,10 @@ img,svg{max-width:100%;display:block}
   .js .crest .ring,.js .crest .arcpath,
   .js .crest .letter,.js .crest .yr{opacity:1}
   .legs .leg-fill{transform:scaleY(1)}
+  /* The gallery patches arrive already sewn: no wipe, seam at its final
+     inset, caption in place. Stated explicitly rather than relying on the
+     duration override, so the frames are never left clipped shut. */
+  .js .shot.rv .plate,.js .shot.rv .shot-img{clip-path:none}
+  .js .shot.rv .plate::after{inset:7px;opacity:1}
+  .js .shot.rv figcaption{opacity:1;transform:none}
 }

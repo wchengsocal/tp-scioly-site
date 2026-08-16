@@ -35,7 +35,9 @@ Primary surface mode: **Persuade**.
   awarded on overall performance.
 - **Materials are fully reimbursed** for relevant, reasonable purchases with
   receipts turned in to the coordinators.
-- All invitationals on the calendar are **MiniSO** competitions.
+- The competition slate was corrected by the user (Aug 2026). It is three
+  invitationals, then the San Diego regional, then the Southern California
+  state tournament. They are not MiniSO events.
 ## Event slate (confirmed by the user, 2026 season)
 
 **Build (6):** Boomilever · Electric Vehicle · Hovercraft · Mission Possible ·
@@ -50,9 +52,21 @@ Design · Protein Modeling · Thermodynamics · Water Quality
 
 ## Season calendar (verified, month/day only — year not stated on source)
 - 9/9 Information meeting · 9/23 Application deadline · 9/27 Teams released
-- 10/10 BEARSO Invitational · 12/19 Yosemite Invitational
-- 1/16 Aggie (UC Davis) Invitational · 1/30 Duke Invitational
-- 2/13 Regionals · States: TBD
+- Club dates (from the source site): 9/9 Information meeting · 9/23
+  Application deadline · 9/27 Teams released
+
+### Competition slate (named by the user, Aug 2026; dates researched)
+
+| Tournament | Date status | Sourced |
+|---|---|---|
+| USC Invitational | January. 2027 date unpublished; 2026 ran Jan 17 | socalscioly.org |
+| Golden Gate Invitational (Stanford / UC Berkeley) | February. One source reports 2/6/27; NOT independently confirmed | goldengateso.com, soinc.org |
+| UCSD Triton Invitational | TBD. 3rd annual, registration not yet open | sciolyatucsd.org |
+| San Diego Regionals | February. 2027 date unpublished; 2026 ran Feb 7 | scilympiad.com/sdso |
+| Southern California State | April. Month confirmed, no date published | socalscioly.org |
+
+**Do not harden any of these into a specific 2027 date without checking the
+host's own page.** A wrong date here makes a student miss a competition.
 
 ## Contact (verified)
 - Email: tpscienceolympiad@gmail.com

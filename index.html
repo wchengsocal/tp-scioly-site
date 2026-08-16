@@ -3,39 +3,46 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Torrey Pines Science Olympiad — a student run club at Torrey Pines High School, San Diego. Over twenty events, teams of fifteen. Applications open every September.">
+<meta name="description" content="Torrey Pines Science Olympiad is a student and parent run club at Torrey Pines High School in San Diego. Twenty-two events, teams of fifteen, and applications every September.">
 <title>Torrey Pines Science Olympiad</title>
 
 <!-- Tab icon + search/social preview: the school mark -->
 <link rel="icon" type="image/png" href="Torrey-Pines-High-School-Logo.png">
 <link rel="apple-touch-icon" href="Torrey-Pines-High-School-Logo.png">
 <meta property="og:title" content="Torrey Pines Science Olympiad">
-<meta property="og:description" content="A student run club at Torrey Pines High School, San Diego. Twenty-two events, teams of fifteen. Applications open every September.">
+<meta property="og:description" content="A student and parent run club at Torrey Pines High School in San Diego. Twenty-two events, teams of fifteen, and applications every September.">
 <meta property="og:image" content="Torrey-Pines-High-School-Logo.png">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Sans:wght@500;700&family=Roboto:wght@400;500;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;700&family=Inter:wght@400;500;600&family=Libre+Baskerville:wght@700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="styles.css">
+
+<!-- Arms the JS-only states (scroll reveals, collapsed accordions) before
+     first paint. Without this they arm in main.js and the page visibly
+     flashes fully-open, then collapses. With JS off the class never lands
+     and every one of those states stays open and readable. -->
+<script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
 <!--
   THESIS: Science Olympiad medals are varsity awards that never get varsity
-  treatment. This page gives the team the jacket — and refuses the dark-navy
+  treatment. This page gives the team the jacket, and refuses the dark-navy
   particle-canvas "science site" the category always ships.
   OWN-WORLD: Melton wool red (#8E1B14) as the field, chenille ember (#C4442A),
   gold bullion (#E0A33C), bone thread (#F2E6D4) on sleeve leather (#241512).
   Chain-stitch dashed seams, knit hem banding, felt grain, sewn-label buttons.
-  Bricolage Grotesque display / Source Serif 4 body / Sometype Mono labels.
+  Libre Baskerville display (the diploma serif) / Inter body / DM Sans labels
+  and patch lettering / Roboto tabular figures.
   STORY: A TPHS student sees a team that treats its science like a varsity
   sport, finds the events they'd compete in, sees the season, signs up.
   FIRST VIEWPORT: Full-bleed wool field; a drawn-on chenille crest patch at
   jacket scale centered; uppercase display headline beneath; two sewn-label
   actions, "Sign up for tryouts" primary in bullion; knit hem closes the fold.
-  FORM: Varsity Chenille — candidate 5 of the grounded list; seed key 071bee8f.
+  FORM: Varsity Chenille, candidate 5 of the grounded list; seed key 071bee8f.
   FINISH: unreviewed and undocumented is unfinished; this build ends with the
   finish review, the verdict, and DESIGN.md
 -->
@@ -45,7 +52,7 @@
 <!-- ══════════════════════════════════════════════════════════════════
      THE FALCON MARK
      The real school logo is used as an image asset: Torrey-Pines-High-School-Logo.png
-     (or .svg) sitting beside this file. It is NOT redrawn or traced —
+     (or .svg) sitting beside this file. It is NOT redrawn or traced,
      the file itself is the mark, in the nav, the hero crest, and the
      scroll-driven flight.
      ══════════════════════════════════════════════════════════════════ -->
@@ -56,14 +63,25 @@
          width="448" height="248" decoding="async">
     <span class="mark-txt"><span>Torrey Pines</span><b>Science Olympiad</b></span>
   </a>
-  <ul class="nav-links">
+  <div class="nav-panel" id="navPanel">
+    <ul class="nav-links">
     <li><a href="#roster">Events</a></li>
     <li><a href="#season">Calendar</a></li>
-    <li><a href="#how">How it works</a></li>
+    <li><a href="#how">How to join</a></li>
     <li><a href="about.html">About</a></li>
-    <li><a href="#faq">FAQ</a></li>
-  </ul>
-  <a class="nav-cta" href="#join">Apply</a>
+    <li><a href="faq.html">FAQ</a></li>
+    </ul>
+  </div>
+  <div class="nav-end">
+    <a class="nav-cta" href="#join">Apply</a>
+    <button class="nav-toggle" id="navToggle" type="button"
+            aria-expanded="false" aria-controls="navPanel">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/>
+      </svg>
+      <span class="nav-toggle-t">Menu</span>
+    </button>
+  </div>
 </nav>
 
 <main id="main">
@@ -73,8 +91,9 @@
      flies the school mark behind the pinned copy. -->
 <header class="hero" id="top">
  <div class="hero-stage felt">
-  <canvas id="falconCanvas" class="hero-canvas" role="img"
-          aria-label="The Torrey Pines Falcons logo flying across the screen as the page scrolls, tracing a gold thread behind it."></canvas>
+  <!-- Decorative. The flight carries no information the copy does not,
+       so it is hidden from assistive tech rather than described to it. -->
+  <canvas id="falconCanvas" class="hero-canvas" aria-hidden="true"></canvas>
   <div class="hero-body">
     <div>
       <!-- Chenille award patch, drawn as SVG and stitched on at load -->
@@ -130,14 +149,14 @@
         </g>
 
         <!-- arced chain-stitch lettering -->
-        <text class="arcpath" font-family="Sometype Mono, monospace"
+        <text class="arcpath" font-family="DM Sans, system-ui, sans-serif"
               font-size="27" font-weight="600" letter-spacing="4"
               fill="#F2E6D4">
           <textPath href="#arcTop" startOffset="50%" text-anchor="middle">SCIENCE OLYMPIAD</textPath>
         </text>
         <!-- division line, straight-stitched under the letter -->
         <text class="arcpath" x="260" y="276" text-anchor="middle"
-              font-family="Sometype Mono, monospace" font-size="13"
+              font-family="DM Sans, system-ui, sans-serif" font-size="13"
               font-weight="500" letter-spacing="4" fill="#E0A33C"
               >DIVISION C</text>
 
@@ -145,15 +164,13 @@
         <g class="yr">
           <rect x="176" y="288" width="168" height="24" fill="#E0A33C"/>
           <text x="260" y="305" text-anchor="middle"
-                font-family="Sometype Mono, monospace" font-size="12"
+                font-family="DM Sans, system-ui, sans-serif" font-size="12"
                 font-weight="600" letter-spacing="3.4" fill="#241512">SAN DIEGO</text>
         </g>
       </svg>
 
-      <h1 class="hero-title">
-        Torrey Pines<br>Science Olympiad
-        <span class="thin">TPHS Science Olympiad is a student-and-parent run club that welcomes bright and high-achieving individuals that may be interested in pursuing a STEM related career in the future.</span>
-      </h1>
+      <h1 class="hero-title">Torrey Pines<br>Science Olympiad</h1>
+      <p class="hero-sub">A student and parent run club at Torrey Pines High School. You pick the events you want, get matched with partners, and compete from September through the state tournament.</p>
 
       <div class="hero-actions">
         <a class="label-btn" href="#join">Apply in September <span class="arw" aria-hidden="true">→</span></a>
@@ -168,6 +185,10 @@
       </p>
     </div>
   </div>
+
+  <!-- Keep-scrolling cue. Decorative: JS shows it only at scroll position 0
+       and removes it permanently on the first scroll. -->
+  <div class="cue" aria-hidden="true"><span></span></div>
 
   <div class="hem" aria-hidden="true">
     <span class="hem-band a"></span>
@@ -186,7 +207,7 @@
   <div class="shell">
     <div class="roster-head">
       <h2 class="h2 rv">Events</h2>
-      <p class="lede rv" data-d="1">Twenty-two events this season, split across study, lab, and build. You'll compete in three or four of them, with one or two partners each. Open a category to see the full slate.</p>
+      <p class="lede rv" data-d="1">Twenty-two events this season, split across study, lab, and build. You'll compete in three or four of them, with one or two partners each. Study, lab, and build are open below.</p>
     </div>
 
     <div class="discipline rv">
@@ -197,9 +218,9 @@
           <span class="disc-chev"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4.5 6 8.5 10 4.5"/></svg></span>
         </span>
       </button>
-      <div class="disc-panel" id="p-study" role="region">
+      <div class="disc-panel" id="p-study">
         <div class="disc-panel-in">
-          <p class="disc-blurb">Written tests, sometimes with a binder you spent all fall building. You study on your own and with your partner between weekly meetings — depth beats cramming.</p>
+          <p class="disc-blurb">Written tests, sometimes with a binder you spent all fall building. You study on your own and with your partner between weekly meetings. Depth beats cramming.</p>
           <ul class="event-list">
             <li><i class="bul"></i>Anatomy and Physiology</li>
             <li><i class="bul"></i>Astronomy</li>
@@ -211,7 +232,6 @@
             <li><i class="bul"></i>Rocks and Minerals</li>
             <li><i class="bul"></i>Codebusters</li>
           </ul>
-          <p class="disc-more"></p>
         </div>
       </div>
     </div>
@@ -224,7 +244,7 @@
           <span class="disc-chev"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4.5 6 8.5 10 4.5"/></svg></span>
         </span>
       </button>
-      <div class="disc-panel" id="p-lab" role="region">
+      <div class="disc-panel" id="p-lab">
         <div class="disc-panel-in">
           <p class="disc-blurb">Hands-on testing at a bench, against the clock, with a partner you have to trust. Procedure counts alongside the answer, so the weekly practice is the point.</p>
           <ul class="event-list">
@@ -236,7 +256,6 @@
             <li><i class="bul"></i>Thermodynamics</li>
             <li><i class="bul"></i>Water Quality</li>
           </ul>
-          <p class="disc-more"></p>
         </div>
       </div>
     </div>
@@ -249,9 +268,9 @@
           <span class="disc-chev"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4.5 6 8.5 10 4.5"/></svg></span>
         </span>
       </button>
-      <div class="disc-panel" id="p-build" role="region">
+      <div class="disc-panel" id="p-build">
         <div class="disc-panel-in">
-          <p class="disc-blurb">Devices designed in fall and still being rebuilt in spring. Builds take the most time outside meetings — construction, testing, and rebuilding. Materials are reimbursed with receipts.</p>
+          <p class="disc-blurb">Devices designed in fall and still being rebuilt in spring. Builds take the most time outside meetings, between construction, testing, and rebuilding. Materials are reimbursed with receipts.</p>
           <ul class="event-list">
             <li><i class="bul"></i>Boomilever</li>
             <li><i class="bul"></i>Electric Vehicle</li>
@@ -260,9 +279,89 @@
             <li><i class="bul"></i>Ping-Pong Parachute</li>
             <li><i class="bul"></i>Wright Stuff</li>
           </ul>
-          <p class="disc-more"></p>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ GALLERY ══════
+     Photographs held the way the jacket holds a patch: merrow edge, chain
+     stitch inset, felt behind. Deliberately uneven spans, a uniform grid of
+     equal tiles is the one thing this page has refused everywhere else.
+
+     TODO: replace each .plate div with a real image element. The figure owns
+     the frame and the aspect-ratio, so the image only needs:
+       class="shot-img", the src, width + height (its true pixel size),
+       loading="lazy", decoding="async", and a real alt.
+     Write the alt to describe what is happening in the frame, not "photo of
+     team". Keep captions to what the picture actually shows, no placements
+     or results the club has not published. -->
+<section class="gallery felt" id="gallery">
+  <div class="shell">
+    <h2 class="h2 rv">Photos</h2>
+    <p class="lede rv" data-d="1">Build nights, competition days, and the regular weeks in between. <!-- TODO: replace --></p>
+
+    <div class="shots">
+      <figure class="shot shot--lead rv">
+        <div class="plate" role="img" aria-label="Placeholder: photograph to be added">
+          <svg class="plate-mark" viewBox="0 0 32 32" aria-hidden="true">
+            <rect x="3" y="6" width="26" height="20" rx="1.5"/>
+            <circle cx="10.5" cy="13" r="2.4"/>
+            <path d="M3 23.5 12 16.5 18 21 24 15 29 19.5"/>
+          </svg>
+          <span class="plate-note">Photo to come</span>
+        </div>
+        <figcaption><b>Placeholder</b> <!-- TODO: replace --></figcaption>
+      </figure>
+
+      <figure class="shot shot--a rv" data-d="1">
+        <div class="plate" role="img" aria-label="Placeholder: photograph to be added">
+          <svg class="plate-mark" viewBox="0 0 32 32" aria-hidden="true">
+            <rect x="3" y="6" width="26" height="20" rx="1.5"/>
+            <circle cx="10.5" cy="13" r="2.4"/>
+            <path d="M3 23.5 12 16.5 18 21 24 15 29 19.5"/>
+          </svg>
+          <span class="plate-note">Photo to come</span>
+        </div>
+        <figcaption><b>Placeholder</b> <!-- TODO: replace --></figcaption>
+      </figure>
+
+      <figure class="shot shot--b rv">
+        <div class="plate" role="img" aria-label="Placeholder: photograph to be added">
+          <svg class="plate-mark" viewBox="0 0 32 32" aria-hidden="true">
+            <rect x="3" y="6" width="26" height="20" rx="1.5"/>
+            <circle cx="10.5" cy="13" r="2.4"/>
+            <path d="M3 23.5 12 16.5 18 21 24 15 29 19.5"/>
+          </svg>
+          <span class="plate-note">Photo to come</span>
+        </div>
+        <figcaption><b>Placeholder</b> <!-- TODO: replace --></figcaption>
+      </figure>
+
+      <figure class="shot shot--c rv" data-d="1">
+        <div class="plate" role="img" aria-label="Placeholder: photograph to be added">
+          <svg class="plate-mark" viewBox="0 0 32 32" aria-hidden="true">
+            <rect x="3" y="6" width="26" height="20" rx="1.5"/>
+            <circle cx="10.5" cy="13" r="2.4"/>
+            <path d="M3 23.5 12 16.5 18 21 24 15 29 19.5"/>
+          </svg>
+          <span class="plate-note">Photo to come</span>
+        </div>
+        <figcaption><b>Placeholder</b> <!-- TODO: replace --></figcaption>
+      </figure>
+
+      <figure class="shot shot--d rv">
+        <div class="plate" role="img" aria-label="Placeholder: photograph to be added">
+          <svg class="plate-mark" viewBox="0 0 32 32" aria-hidden="true">
+            <rect x="3" y="6" width="26" height="20" rx="1.5"/>
+            <circle cx="10.5" cy="13" r="2.4"/>
+            <path d="M3 23.5 12 16.5 18 21 24 15 29 19.5"/>
+          </svg>
+          <span class="plate-note">Photo to come</span>
+        </div>
+        <figcaption><b>Placeholder</b> <!-- TODO: replace --></figcaption>
+      </figure>
     </div>
   </div>
 </section>
@@ -270,8 +369,8 @@
 <!-- ══════ SEASON ══════ -->
 <section class="season felt on-wool" id="season">
   <div class="shell">
-    <h2 class="h2 rv">The season,<br>date by date.</h2>
-    <p class="lede rv" data-d="1">Four invitationals lead into regionals. Every invitational on this calendar is a MiniSO competition.</p>
+    <h2 class="h2 rv">Season Calendar</h2>
+    <p class="lede rv" data-d="1">Three invitationals lead into the San Diego regional, and the top teams from every Southern California regional go on to state in April. <!-- TODO: confirm 2027 dates as each tournament publishes them --></p>
 
     <div class="season-grid">
       <ol class="legs rv" id="legs">
@@ -292,39 +391,34 @@
           <p>Events, partners, and teams are posted. Weekly meetings begin and build events start construction.</p>
         </li>
         <li class="leg">
-          <div class="leg-when">Oct 10</div>
-          <h3>BEARSO Invitational</h3>
-          <p>First competition of the year. A full day of events and the first read on where the lineup stands.</p>
+          <div class="leg-when">January</div>
+          <h3>USC Invitational</h3>
+          <p>Billed as the largest in-person Science Olympiad tournament in the country, with Divisions B and C both competing. Held in January; the 2027 date posts when registration opens.</p>
         </li>
         <li class="leg">
-          <div class="leg-when">Dec 19</div>
-          <h3>Yosemite Invitational</h3>
-          <p>Mid-season. Builds have been rebuilt at least once by now and study events have their binders in shape.</p>
-        </li>
-        <li class="leg">
-          <div class="leg-when">Jan 16</div>
-          <h3>Aggie Invitational · UC Davis</h3>
-          <p>The northern trip, and the last long rehearsal before regionals week.</p>
-        </li>
-        <li class="leg">
-          <div class="leg-when">Jan 30</div>
-          <h3>Duke Invitational</h3>
-          <p>Final invitational. Everything after this counts toward advancing.</p>
-        </li>
-        <li class="leg">
-          <div class="leg-when">Feb 13</div>
-          <h3>Regionals</h3>
-          <p>One day, every event, one shot. Medals go to top-20 placements and team trophies are decided on overall performance.</p>
+          <div class="leg-when">February</div>
+          <h3>Golden Gate Invitational</h3>
+          <p>Run by Stanford and UC Berkeley students and the biggest invitational on the West Coast. The long trip north, and the hardest field you will see before regionals.</p>
         </li>
         <li class="leg">
           <div class="leg-when">Date TBD</div>
-          <h3>State tournament</h3>
-          <p><!-- TODO: replace when the state date is announced -->Not yet announced. The calendar updates when the date is released.</p>
+          <h3>UCSD Triton Invitational</h3>
+          <p>Third year for this one and the closest invitational to home. Registration is not open yet, so the date is still unannounced.</p>
+        </li>
+        <li class="leg">
+          <div class="leg-when">February</div>
+          <h3>San Diego Regionals</h3>
+          <p>One day, every event, one shot. The top 20 in each event get medals, and the top teams advance to the state tournament.</p>
+        </li>
+        <li class="leg">
+          <div class="leg-when">April</div>
+          <h3>Southern California State</h3>
+          <p>The top teams from all nine Southern California regionals, in April. Everything from September points here.</p>
         </li>
       </ol>
 
       <aside class="awards rv" data-d="1">
-        <h3>How a season is shaped</h3>
+        <h3>Season at a Glance</h3>
         <div class="award">
           <div class="award-n" data-count="15">0</div>
           <div class="award-t">Students per team<em>The club fields multiple teams</em></div>
@@ -334,12 +428,12 @@
           <div class="award-t">Events each<em>With one or two partners per event</em></div>
         </div>
         <div class="award">
-          <div class="award-n" data-count="4">0</div>
-          <div class="award-t">Invitationals<em>All MiniSO, before regionals</em></div>
+          <div class="award-n" data-count="3">0</div>
+          <div class="award-t">Invitationals<em>USC, Golden Gate, and Triton</em></div>
         </div>
         <div class="award">
           <div class="award-n" data-count="20" data-prefix="Top ">0</div>
-          <div class="award-t">Places medal<em>Team trophies go on overall performance</em></div>
+          <div class="award-t">Places get a medal<em>Team trophies go on overall performance</em></div>
         </div>
       </aside>
     </div>
@@ -349,8 +443,8 @@
 <!-- ══════ TRACKS ══════ -->
 <section class="tracks hide" id="how">
   <div class="shell">
-    <h2 class="h2 rv">How you get on a team.</h2>
-    <p class="lede rv" data-d="1">Four steps, all of them in September. There's no entry exam — you apply, and assignments are made from what you ask for.</p>
+    <h2 class="h2 rv">How to Join</h2>
+    <p class="lede rv" data-d="1">Four steps, all of them in September. There's no entry exam. You apply, and assignments are made from what you ask for.</p>
 
     <ol class="steps">
       <li class="step rv">
@@ -390,9 +484,9 @@
       <article class="track rv" data-d="1">
         <div class="track-kind">What you get back</div>
         <h3>Costs are reimbursed</h3>
-        <p>Relevant, reasonable purchases are fully reimbursed when you turn receipts in to the coordinators — build materials shouldn't be why you skip an event.</p>
+        <p>Relevant, reasonable purchases are fully reimbursed when you turn receipts in to the coordinators. Build materials shouldn't be why you skip an event.</p>
         <ul>
-          <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4"/></svg>Medals for top-20 placements in your events</li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4"/></svg>Medals for top 20 placements in your events</li>
           <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4"/></svg>Team trophies on overall performance</li>
           <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4"/></svg>Topics you can't get in a normal class schedule</li>
         </ul>
@@ -401,47 +495,16 @@
   </div>
 </section>
 
-<!-- ══════ FAQ ══════ -->
-<section class="faq felt on-wool" id="faq">
-  <div class="shell">
-    <h2 class="h2 rv">Questions people actually ask.</h2>
-
-    <div class="qa-list">
-      <details class="qa rv">
-        <summary>What if I don't get the event I wanted?</summary>
-        <div class="qa-body"><p>It happens, and it's usually fine. An event you didn't ask for is a chance to try something you'd never have picked — a lot of people find what they're actually good at that way.</p></div>
-      </details>
-      <details class="qa rv" data-d="1">
-        <summary>How much time does this take?</summary>
-        <div class="qa-body"><p>Weekly meetings for each of your events, plus studying on your own and with your partner, plus any extra work your coaches assign. Build events take the most — construction and testing add up. The one real failure mode is procrastinating.</p></div>
-      </details>
-      <details class="qa rv" data-d="2">
-        <summary>Who's on my team?</summary>
-        <div class="qa-body"><p>The club fields multiple teams of fifteen. Your team is you, your partners, and their partners — so you'll know the people you compete beside.</p></div>
-      </details>
-      <details class="qa rv" data-d="3">
-        <summary>How does a competition day work?</summary>
-        <div class="qa-body"><p>You're there the full day and compete in your events as they're scheduled. Medals go to top-20 placements, and team trophies are awarded on overall performance.</p></div>
-      </details>
-      <details class="qa rv">
-        <summary>Do I have to pay for my own materials?</summary>
-        <div class="qa-body"><p>No. Relevant, reasonable purchases are fully reimbursed — keep the receipts and turn them in to the coordinators.</p></div>
-      </details>
-      <details class="qa rv" data-d="1">
-        <summary>Do I need experience to apply?</summary>
-        <div class="qa-body"><p>No. The club is open to anyone interested in science and STEM, and events are assigned partly on what you say you want to learn.</p></div>
-      </details>
-    </div>
-  </div>
-</section>
-
 <!-- ══════ CLOSE ══════ -->
 <section class="close hide" id="join">
+  <!-- Halftone dot field: printed-felt texture, sized by scroll position.
+       Decorative only, the section reads identically without it. -->
+  <canvas id="dotField" class="dots" aria-hidden="true"></canvas>
   <div class="shell">
-    <h2 class="h2 rv">Applications open<br>September 9.</h2>
-    <p class="lede rv" data-d="1">Start at the information meeting, apply by the 23rd, and you'll have your events and your team by the 27th. Questions before then go to the inbox or the Discord.</p>
+    <h2 class="h2 rv">Apply</h2>
+    <p class="lede rv" data-d="1">Applications open September 9. Start at the information meeting, apply by the 23rd, and you'll have your events and your team by the 27th. Questions before then go to the inbox or the Discord.</p>
     <div class="hero-actions rv" data-d="2">
-      <a class="label-btn" href="mailto:tpscienceolympiad@gmail.com">Email the team <span class="arw" aria-hidden="true">→</span></a>
+      <a class="label-btn" href="mailto:tpscienceolympiad@gmail.com?subject=Remind%20me%20when%20applications%20open">Ask us to remind you <span class="arw" aria-hidden="true">→</span></a>
       <a class="label-btn ghost" href="https://discord.gg/jX9UzMf" target="_blank" rel="noopener">Join the Discord</a>
     </div>
     <p class="close-note rv" data-d="3"><!-- TODO: link the application form here once it opens -->Application forms are posted when the application opens</p>
@@ -454,9 +517,14 @@
   <div class="foot-mono">
     Torrey Pines Science Olympiad<br>
     Torrey Pines High School · San Diego, California<br>
-    A student-and-parent run club
+    A student and parent run club
   </div>
   <div class="foot-links">
+    <!-- About and FAQ live here as well as in the nav: the nav links are
+         hidden below 900px, so without these two the only pages on the site
+         would be unreachable from a phone. -->
+    <a href="about.html">About</a>
+    <a href="faq.html">FAQ</a>
     <a href="mailto:tpscienceolympiad@gmail.com">tpscienceolympiad@gmail.com</a>
     <a href="https://instagram.com/tpscienceolympiad" target="_blank" rel="noopener">@tpscienceolympiad</a>
     <a href="https://discord.gg/jX9UzMf" target="_blank" rel="noopener">Discord</a>
@@ -466,7 +534,7 @@
 
 <!-- Privacy notice. States what is actually true of this site. -->
 <div class="cookie" id="cookieNotice" role="region" aria-label="Privacy notice" hidden>
-  <p>We use cookies to improve your experience, analyze site traffic, and personalize content.</p>
+  <p>This site sets no cookies and runs no analytics. Fonts load from Google, which sees your IP address.</p>
   <button type="button" id="cookieOk">Got it</button>
 </div>
 
