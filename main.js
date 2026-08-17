@@ -62,6 +62,21 @@
   window.addEventListener('scroll', onScroll, {passive:true});
   onScroll();
 
+  /* Publish the bar's real height as --bar, which is what every anchor
+     target uses for scroll-margin-top. The bar is content-sized and shrinks
+     at two breakpoints, so a hardcoded value would land sections low on some
+     widths and behind the bar on others. */
+  (function(){
+    function setBar(){
+      if(!nav) return;
+      document.documentElement.style.setProperty(
+        '--bar', Math.round(nav.getBoundingClientRect().height) + 'px');
+    }
+    setBar();
+    window.addEventListener('resize', setBar, {passive:true});
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(setBar);
+  })();
+
   /* ── NAV: the mobile menu ──
      Below 900px the link list used to be display:none with nothing in its
      place, so About, Calendar, How to join and the FAQ were unreachable on
@@ -113,10 +128,12 @@
   (function(){
     var reduceQ = window.matchMedia('(prefers-reduced-motion: reduce)');
 
+    /* Lands the section flush under the fixed bar. Any extra gap here shows
+       a strip of the previous section above the one you asked for. */
     function targetTop(el){
       var barH = nav ? nav.getBoundingClientRect().height : 0;
       var y = window.scrollY + el.getBoundingClientRect().top;
-      return Math.max(0, Math.round(y - barH - 10));
+      return Math.max(0, Math.round(y - barH));
     }
 
     /* Without this the link fires, the page moves, and focus is still back

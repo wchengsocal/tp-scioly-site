@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="The students who run Torrey Pines Science Olympiad, including the copresidents, vice president, and coordinators for the 2026 season.">
-<title>About | Torrey Pines Science Olympiad</title>
+<meta name="description" content="How to apply to Torrey Pines Science Olympiad: the information meeting on September 9, the application deadline on the 23rd, and teams released on the 27th. Application documents are posted here when they open.">
+<title>Apply | Torrey Pines Science Olympiad</title>
 
 <link rel="icon" type="image/png" href="Torrey-Pines-High-School-Logo.png">
 <link rel="apple-touch-icon" href="Torrey-Pines-High-School-Logo.png">
-<meta property="og:title" content="About | Torrey Pines Science Olympiad">
-<meta property="og:description" content="The students who run Torrey Pines Science Olympiad.">
+<meta property="og:title" content="Apply | Torrey Pines Science Olympiad">
+<meta property="og:description" content="The information meeting is September 9, applications are due the 23rd, and teams go up on the 27th.">
 <meta property="og:image" content="Torrey-Pines-High-School-Logo.png">
 <meta property="og:type" content="website">
 
@@ -39,14 +39,14 @@
     <li><a href="index.html#events">Events</a></li>
     <li><a href="index.html#season">Calendar</a></li>
     <li><a href="index.html#how">How to join</a></li>
-    <li><a href="apply.html">Apply</a></li>
+    <li><a href="apply.html" aria-current="page">Apply</a></li>
     <li><a href="roster.html">Roster</a></li>
-    <li><a href="about.html" aria-current="page">About</a></li>
+    <li><a href="about.html">About</a></li>
     <li><a href="faq.html">FAQ</a></li>
     </ul>
   </div>
   <div class="nav-end">
-    <a class="nav-cta" href="apply.html">Apply</a>
+    <a class="nav-cta" href="apply.html" aria-current="page">Apply</a>
     <button class="nav-toggle" id="navToggle" type="button"
             aria-expanded="false" aria-controls="navPanel">
       <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -59,77 +59,48 @@
 
 <main id="main">
 
-<!-- ══════ ABOUT HEADER ══════ -->
+<!-- ══════ APPLY HEADER ══════ -->
 <header class="about-head felt on-wool">
   <div class="shell">
-    <h1 class="h2">Our Team</h1>
-    <p class="lede">Students run this club. The officers below choose the event lineup, lead weekly meetings, handle tournament registration, and answer whatever new members ask them.</p>
+    <h1 class="h2">Apply</h1>
+    <p class="lede">There's no entry exam. Come to the information meeting, tell us which events you want, and we'll build your schedule around what you asked for. Applications open on September 9.</p>
   </div>
 </header>
 
-<!-- ══════ OFFICERS ══════ -->
-<section class="officers hide" id="officers">
+<!-- ══════ DOCUMENTS ══════
+     The dates that used to sit above this lived on the homepage calendar
+     too, so they were the same three entries written twice. The calendar
+     keeps them; this page keeps the thing only it has. Team rosters get
+     their own page rather than a second slot here. -->
+<section class="apply-steps hide" id="steps">
   <div class="shell">
+    <h2 class="section-label">Application Documents</h2>
 
-    <h2 class="section-label">Officers, 2026 Season</h2>
+    <!-- The application form and everything that comes with it lands here.
+         Deliberately a real, labelled slot rather than a sentence: when the
+         forms exist they replace .docket-empty with a list of links, and
+         nothing else on the page has to move.
 
-    <ul class="crew">
-      <li class="member">
-        <div class="portrait">
-          <!-- TODO: replace with photo, <img src="stella-jeong.jpg" alt="Stella Jeong"> -->
-          <span class="portrait-initials" aria-hidden="true">SJ</span>
-        </div>
-        <div class="member-role">Copresident</div>
-        <h3 class="member-name">Stella Jeong</h3>
-      </li>
-
-      <li class="member">
-        <div class="portrait">
-          <!-- TODO: replace with photo, <img src="lawrence-guo.jpg" alt="Lawrence Guo"> -->
-          <span class="portrait-initials" aria-hidden="true">LG</span>
-        </div>
-        <div class="member-role">Copresident</div>
-        <h3 class="member-name">Lawrence Guo</h3>
-      </li>
-
-      <li class="member">
-        <div class="portrait">
-          <!-- TODO: replace with photo, <img src="vera-muller.jpg" alt="Vera Muller"> -->
-          <span class="portrait-initials" aria-hidden="true">VM</span>
-        </div>
-        <div class="member-role">Vice President</div>
-        <h3 class="member-name">Vera Muller</h3>
-      </li>
-
-      <li class="member">
-        <div class="portrait">
-          <!-- TODO: replace with photo, <img src="william-cheng.jpg" alt="William Cheng"> -->
-          <span class="portrait-initials" aria-hidden="true">WC</span>
-        </div>
-        <div class="member-role">Coordinator</div>
-        <h3 class="member-name">William Cheng</h3>
-      </li>
-
-      <li class="member">
-        <div class="portrait">
-          <!-- TODO: replace with photo, <img src="ellie-kim.jpg" alt="Ellie Kim"> -->
-          <span class="portrait-initials" aria-hidden="true">EK</span>
-        </div>
-        <div class="member-role">Coordinator</div>
-        <h3 class="member-name">Ellie Kim</h3>
-      </li>
-    </ul>
-
+         TODO: when applications open, delete .docket-empty and list each
+         document as an <li> inside a <ul class="docket-list">, one link per
+         document, with the form itself first. -->
+    <div class="docket" id="documents">
+      <p class="docket-empty">
+        <span class="docket-tag">Coming soon</span>
+        <span>We'll post the application form and any other paperwork here
+        once applications open on September 9.</span>
+      </p>
+    </div>
   </div>
 </section>
 
 <!-- ══════ CONTACT CLOSE ══════ -->
 <section class="close felt on-wool">
   <div class="shell">
-    <h2 class="h2">Get in Touch</h2>
-    <p class="lede">Send us an email or a message on the Discord and an officer will get back to you. Applications open every September.</p>
+    <h2 class="h2">Before You Apply</h2>
+    <p class="lede">If you have questions before the meeting, the inbox and the Discord are both open. We can also email you when the application form goes up.</p>
     <div class="hero-actions">
-      <a class="label-btn" href="mailto:tpscienceolympiad@gmail.com">Email the team <span class="arw" aria-hidden="true">→</span></a>
+      <a class="label-btn" href="mailto:tpscienceolympiad@gmail.com?subject=Remind%20me%20when%20applications%20open">Ask us to remind you <span class="arw" aria-hidden="true">→</span></a>
       <a class="label-btn ghost" href="https://discord.gg/jX9UzMf" target="_blank" rel="noopener">Join the Discord</a>
     </div>
   </div>
@@ -145,8 +116,8 @@
   </div>
   <div class="foot-links">
     <a href="index.html">Home</a>
-    <a href="apply.html">Apply</a>
     <a href="roster.html">Roster</a>
+    <a href="about.html">About</a>
     <a href="faq.html">FAQ</a>
     <a href="mailto:tpscienceolympiad@gmail.com">tpscienceolympiad@gmail.com</a>
     <a href="https://instagram.com/tpscienceolympiad" target="_blank" rel="noopener">@tpscienceolympiad</a>

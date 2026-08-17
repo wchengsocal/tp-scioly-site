@@ -64,6 +64,11 @@
   --fs-prose:1rem;        /* running prose inside sections */
 
   --ease:cubic-bezier(.22,1,.36,1);
+  /* Height of the fixed nav, so anchor targets can land flush against it.
+     The bar is content-sized and changes at two breakpoints, so main.js
+     overwrites this with the measured height on load and on resize. This
+     value is the desktop default, correct before the script runs. */
+  --bar:72px;
   --gutter:clamp(20px, 5vw, 72px);
   --rule:1px solid var(--stitch);
 }
@@ -75,16 +80,33 @@
    would fight that, because the glide steps with plain scrollTo. */
 html{-webkit-text-size-adjust:100%}
 
-/* Anchor targets clear the fixed bar. The glide applies the same offset
-   itself; this covers arriving on a hash URL directly, where the browser
-   does the scrolling and no script is involved. */
-section[id],header[id],main[id],div[id]{scroll-margin-top:clamp(72px,9vh,96px)}
+/* Anchor targets clear the fixed bar, and land flush against it. This used
+   to be clamp(72px,9vh,96px), which scaled with viewport height while the
+   bar itself does not, so on a tall window a section landed up to 24px low
+   and a strip of the previous section stayed on screen. --bar is the real
+   measured height of the nav; the glide in main.js applies the same value,
+   so a scripted jump and a bare hash URL land identically. */
+section[id],header[id],main[id],div[id]{scroll-margin-top:var(--bar)}
 /* Focus is moved to the landed section for keyboard users, but a scroll
    destination is not a control, so it gets no ring. tabindex="-1" is only
    ever set by the glide, so this cannot swallow a real control's focus
    state. Written unscoped because <main> is itself a target, via the skip
    link, and a descendant selector would have ringed the whole page. */
 [tabindex="-1"]:focus{outline:none}
+
+/* ── ARRIVAL PAINT HOLD ──
+   While the inline head script is positioning the page, the content is
+   held invisible so the reader never sees the top of the document flash
+   past on the way to an anchor, or the restored scroll position drift
+   while late layout settles. visibility, not display, so the page still
+   lays out and can be measured.
+
+   Scoped to .js, so with scripting off nothing is ever hidden. The script
+   clears the attribute on `load` and on a 1.2s timeout, whichever comes
+   first, so a stalled webfont cannot leave a blank page. The background is
+   still painted, so the hold reads as the page's own colour, not white. */
+.js[data-settling] body > *{visibility:hidden}
+
 body{
   background:var(--leather);
   color:var(--bone);
@@ -597,6 +619,10 @@ img,svg{max-width:100%;display:block}
 }
 .js .disc-panel{grid-template-rows:0fr}
 .js .disc-panel[data-open]{grid-template-rows:1fr}
+/* Set while the page is being positioned on arrival, so the panels snap to
+   their collapsed state instead of animating shut under a reader who never
+   opened them. Cleared as soon as the position is settled. */
+[data-settling] .disc-panel{transition:none}
 .disc-panel-in{overflow:hidden}
 /* Columns are wider than the old 210px because each row can now open a
    description underneath its name, and 210px set that text at a width
@@ -1016,9 +1042,50 @@ img,svg{max-width:100%;display:block}
 }
 .close .lede{margin-inline:auto;color:var(--wool-tint)}
 .close .hero-actions{margin-top:clamp(26px,4vw,38px)}
-.close-note{
-  margin-top:26px;font-family:var(--mono);font-size:var(--fs-label-sm);
-  letter-spacing:.13em;text-transform:uppercase;color:var(--wool-tint);
+/* ── The document docket ──
+   Where the application form lands when it opens. It reads as a sewn-on
+   label: a bounded panel on the wool rather than another centered line of
+   text, so an empty state still looks like a place things go, and the
+   filled state needs no new layout. Left-aligned inside a centered section
+   on purpose, a list of links wants a consistent left edge to scan down. */
+.docket{
+  margin:clamp(34px,5vw,52px) auto 0;max-width:560px;text-align:left;
+  border:1px solid rgba(242,230,212,.22);
+  background:rgba(36,21,18,.26);
+  padding:clamp(18px,2.6vw,26px) clamp(18px,3vw,30px);
+}
+.docket-h{
+  font-family:var(--mono);font-size:var(--fs-label);font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--bone);
+  margin-bottom:12px;
+}
+/* The tag sits on its own row rather than inline. Inline, the sentence
+   wrapped back underneath it and the paragraph lost its left edge. */
+.docket-empty{
+  font-size:var(--fs-prose-sm);line-height:1.6;color:var(--wool-tint);margin:0;
+  display:grid;gap:11px;justify-items:start;
+}
+/* The status reads first and stays readable on its own, so the tag is a
+   real inline label rather than colour on the sentence. */
+.docket-tag{
+  display:inline-block;
+  font-family:var(--mono);font-size:var(--fs-label-sm);font-weight:600;
+  letter-spacing:.13em;text-transform:uppercase;
+  color:var(--leather);background:var(--bullion);
+  padding:3px 9px;
+}
+/* Ready for the filled state: one link per document, nothing else moves. */
+.docket-list{list-style:none;margin:0;display:grid;gap:2px}
+.docket-list a{
+  display:block;padding:11px 0;min-height:44px;
+  color:var(--bone);text-decoration:underline;
+  text-underline-offset:3px;text-decoration-color:rgba(224,163,60,.5);
+  border-bottom:1px dotted rgba(242,230,212,.16);
+  transition:color .25s var(--ease), text-decoration-color .25s var(--ease);
+}
+.docket-list li:last-child a{border-bottom:0}
+.docket-list a:hover,.docket-list a:focus-visible{
+  color:var(--bullion-ink);text-decoration-color:var(--bullion);
 }
 
 /* ═══ ABOUT PAGE ═══ */
@@ -1035,6 +1102,45 @@ img,svg{max-width:100%;display:block}
 .officers{background:var(--leather)}
 /* room under the last row so the privacy bar never sits on a name */
 .officers .shell{padding-bottom:clamp(90px,12vw,150px)}
+
+/* ═══ APPLY PAGE ═══
+   The dated steps this section used to hold were the homepage calendar's
+   first three entries repeated, so they are gone and the calendar keeps
+   them. What is left is the document slot, which exists nowhere else. */
+.apply-steps{background:var(--leather)}
+/* This section holds one small panel. The section rhythm used elsewhere
+   would leave it floating in a mostly empty band, so it takes a tighter
+   floor and ceiling than the roster or officers sections do. */
+.apply-steps .shell{
+  padding-top:clamp(44px,5.5vw,68px);
+  padding-bottom:clamp(52px,6.5vw,80px);
+}
+/* On leather the docket's own panel tone would vanish into the ground, so
+   it lifts slightly and sits left under the section label rather than
+   centred the way it did inside the homepage's close. */
+.apply-steps .docket{
+  margin-inline:0;max-width:none;background:rgba(242,230,212,.04);
+}
+.apply-steps .docket-empty{color:var(--bone-dim)}
+/* Ready for Sep 27: teams sit side by side once there is more than one,
+   and fall to a single column on a phone. Nothing here renders until the
+   .docket-empty inside #teams is replaced with real rosters. */
+.teams{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:clamp(20px,3vw,36px);
+}
+.team h3{
+  font-family:var(--display);font-weight:700;
+  font-size:clamp(1.08rem,1rem + .5vw,1.34rem);
+  letter-spacing:-.006em;margin-bottom:10px;
+  padding-bottom:9px;border-bottom:1px solid var(--stitch-strong);
+}
+.team-list{list-style:none;display:grid;gap:1px}
+.team-list li{
+  padding:9px 0;font-size:var(--fs-prose-sm);color:var(--bone-dim);
+  border-bottom:1px dotted rgba(242,230,212,.16);
+}
+.team-list li:last-child{border-bottom:0}
 .section-label{
   font-family:var(--ui);font-size:var(--fs-label);font-weight:700;
   letter-spacing:.2em;text-transform:uppercase;color:var(--bullion);
