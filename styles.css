@@ -665,8 +665,15 @@ img,svg{max-width:100%;display:block}
 }
 /* Breathing room under each event list. This used to be an empty <p> in
    the markup, which is padding wearing a costume and put three blank
-   paragraphs in the accessibility tree. */
-.disc-panel-in{padding-bottom:clamp(14px,2.4vw,26px)}
+   paragraphs in the accessibility tree.
+
+   It hangs off the LAST CHILD rather than off .disc-panel-in itself. The
+   panel collapses by animating its grid row from 1fr to 0fr, and padding on
+   the row's own box is not part of what that row can shrink: at 0fr the
+   panel still resolved to 26px, so a strip of the first blurb line stayed
+   visible under every closed discipline. Inside the child, the same spacing
+   sits within the clipped area and collapses with it. */
+.disc-panel-in > :last-child{padding-bottom:clamp(14px,2.4vw,26px)}
 
 /* ═══ GALLERY, photographs held the way the jacket holds a patch ═══
    A third ground tone, darker than the season's wool, so leather → deep

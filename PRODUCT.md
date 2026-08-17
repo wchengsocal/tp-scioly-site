@@ -21,7 +21,10 @@ Primary surface mode: **Persuade**.
 - Torrey Pines High School, San Diego, CA. Division C.
 - **A student-AND-PARENT run club** — not purely student-run. Welcomes students
   interested in STEM careers.
-- 22 events this season, in three kinds: study (9), lab (7), build (6).
+- 23 events this season, in three kinds: study (9), lab (8), build (6).
+  Forensics was added to the lab list from the official Division C roster
+  (soinc.org); the club's Wix page listed 22 and omitted it. Worth confirming
+  with an officer that the club actually runs Forensics this season.
 - **Entry is an application, not a tryout test.** There is an information meeting,
   then an application deadline, then teams are released.
 - **Multiple teams of 15 students each.** Your team is you, your partners, and
