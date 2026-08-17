@@ -428,6 +428,36 @@
     if(firstPanel) firstPanel.setAttribute('data-open','');
   }
 
+  /* ── ROSTER: one event's official description opens ──
+     Each event name is a button; the <p> beside it holds the description
+     Science Olympiad publishes for that event. The <li> carries the open
+     state so CSS can both reveal the paragraph and let the row span the
+     full grid width, which keeps a long description off a 210px column.
+
+     Every id here would be dead weight: the button and its paragraph are
+     siblings, so the panel is found by walking the row rather than by
+     wiring up twenty-two aria-controls pairs. The paragraph is labelled
+     by the button instead, which is what a screen reader needs to know
+     whose description it just landed in. */
+  document.querySelectorAll('.event-list .ev').forEach(function(btn, i){
+    var row  = btn.parentElement;
+    var desc = row.querySelector('.ev-d');
+    if(!desc) return;
+
+    if(!desc.id) desc.id = 'ev-d-' + i;
+    if(!btn.id)  btn.id  = 'ev-b-' + i;
+    desc.setAttribute('role','region');
+    desc.setAttribute('aria-labelledby', btn.id);
+    btn.setAttribute('aria-controls', desc.id);
+
+    btn.addEventListener('click', function(){
+      var open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!open));
+      if(open) row.removeAttribute('data-open');
+      else     row.setAttribute('data-open','');
+    });
+  });
+
   /* The .track pointer-follow light was removed with the panels it lit.
      It was a hover treatment on an <article> with nothing to click, which
      promises an interaction that does not exist. */

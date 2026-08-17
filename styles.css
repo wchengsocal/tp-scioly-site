@@ -525,6 +525,15 @@ img,svg{max-width:100%;display:block}
   max-width:62ch;margin-top:18px;color:var(--bone-dim);
 }
 .on-wool .lede{color:var(--wool-tint)}
+/* Inline link inside a lede. Underlined rather than colour-only, so it does
+   not rely on hue alone to read as a link. */
+.lede-a{
+  color:var(--bullion-ink);
+  text-decoration:underline;text-underline-offset:3px;
+  text-decoration-color:rgba(224,163,60,.5);
+  transition:text-decoration-color .3s var(--ease);
+}
+.lede-a:hover,.lede-a:focus-visible{text-decoration-color:var(--bullion)}
 
 /* ═══ ROSTER, the printed program, three disciplines ═══ */
 .roster{background:var(--leather)}
@@ -589,21 +598,67 @@ img,svg{max-width:100%;display:block}
 .js .disc-panel{grid-template-rows:0fr}
 .js .disc-panel[data-open]{grid-template-rows:1fr}
 .disc-panel-in{overflow:hidden}
+/* Columns are wider than the old 210px because each row can now open a
+   description underneath its name, and 210px set that text at a width
+   nobody wants to read. align-items:start keeps an opened row from
+   stretching its neighbours to match its height. */
 .event-list{
   list-style:none;
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(272px,1fr));
+  align-items:start;
   gap:0 clamp(16px,3vw,40px);
   padding-bottom:clamp(24px,3.5vw,40px);
 }
 .event-list li{
-  display:flex;align-items:baseline;gap:12px;
-  padding:11px 0;border-bottom:1px dotted rgba(242,230,212,.16);
+  border-bottom:1px dotted rgba(242,230,212,.16);
   font-size:var(--fs-prose);
 }
-.event-list li .bul{
+/* The event name is the control. A real <button> so it is tabbable, has a
+   focus ring, and announces its expanded state, rather than a div with a
+   click handler bolted on. It is full-bleed and 44px tall so the touch
+   target is the whole row, not just the words. */
+.event-list .ev{
+  display:flex;align-items:baseline;gap:12px;
+  width:100%;min-height:44px;padding:11px 0;
+  background:none;border:0;border-radius:0;
+  font:inherit;color:inherit;text-align:left;cursor:pointer;
+}
+.event-list .ev .bul{
   width:6px;height:6px;flex:none;background:var(--ember);
   transform:rotate(45deg);translate:0 -2px;
+  transition:background .18s cubic-bezier(.22,1,.36,1),
+             rotate .28s cubic-bezier(.22,1,.36,1);
 }
+.event-list .ev:hover .ev-n,
+.event-list .ev:focus-visible .ev-n{color:var(--bullion-ink)}
+.event-list .ev:hover .bul{background:var(--bullion)}
+/* Open: the lozenge turns upright and gold, so an opened row reads as
+   opened without adding a chevron the rest of this list does not have. */
+.event-list .ev[aria-expanded="true"] .bul{
+  background:var(--bullion);rotate:45deg;
+}
+.event-list .ev[aria-expanded="true"] .ev-n{color:var(--bone)}
+.event-list .ev-n{transition:color .18s cubic-bezier(.22,1,.36,1)}
+
+/* The official description. Collapsed by default only once JS has armed
+   the list: with JS off every description stays open and readable. */
+.event-list .ev-d{
+  color:var(--bone-dim);
+  font-size:var(--fs-prose-sm);line-height:1.6;
+  padding:0 0 14px 18px;border-left:1px solid rgba(224,163,60,.34);
+  margin:0 0 4px;
+}
+.event-list .ev-d--none{font-style:italic;color:rgba(200,180,154,.72)}
+.js .event-list .ev-d{display:none}
+.js .event-list li[data-open] .ev-d{display:block;animation:evIn .32s cubic-bezier(.22,1,.36,1) both}
+@keyframes evIn{from{opacity:0;translate:0 -4px}to{opacity:1;translate:0 0}}
+@media (prefers-reduced-motion:reduce){
+  .js .event-list li[data-open] .ev-d{animation:none}
+  .event-list .ev .bul{transition:none}
+}
+/* The open row stays in its own column rather than spanning the grid.
+   Spanning pulled the row out of the column flow and left a ragged hole
+   beside it, and reflowed every row below onto a new line. */
 .disc-blurb{
   max-width:60ch;color:var(--bone-dim);
   padding-bottom:clamp(20px,3vw,32px);font-size:var(--fs-prose);
