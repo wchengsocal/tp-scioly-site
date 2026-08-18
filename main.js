@@ -273,7 +273,10 @@
     var logo = new Image();
     var logoReady = false;
     logo.onload = function(){ logoReady = true; falconScroll(); };
-    logo.src = 'Torrey-Pines-High-School-Logo.png';
+    /* Root-relative: main.js is shared by pages served from / and from
+       /apply/, /roster/ and so on, where a bare filename would resolve
+       against the subdirectory and 404. */
+    logo.src = '/Torrey-Pines-High-School-Logo.png';
 
     function draw(p){
       if(!W || !H) return;
