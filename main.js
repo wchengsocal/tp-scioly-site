@@ -20,6 +20,12 @@
   'use strict';
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* This file's own URL, captured while the script is still executing
+     top-level (document.currentScript is null inside later callbacks).
+     Assets are resolved against it so they work from the homepage, from
+     a subpage folder, and from a file:// double-click alike. */
+  var HERE = (document.currentScript && document.currentScript.src) || location.href;
+
   /* Arm the scroll reveals only now that JS is running to disarm them.
      Without this class the page renders fully visible. */
   document.documentElement.classList.add('js');
@@ -273,10 +279,12 @@
     var logo = new Image();
     var logoReady = false;
     logo.onload = function(){ logoReady = true; falconScroll(); };
-    /* Root-relative: main.js is shared by pages served from / and from
-       /apply/, /roster/ and so on, where a bare filename would resolve
-       against the subdirectory and 404. */
-    logo.src = '/Torrey-Pines-High-School-Logo.png';
+    /* Resolved against this script's own URL rather than the page's, so it
+       works from the homepage, from /apply/, from a file:// double-click,
+       and from a project subpath alike. A bare filename would resolve
+       against the *page* and 404 on the subpages; a leading slash would
+       resolve to the drive root under file://. */
+    logo.src = new URL('Torrey-Pines-High-School-Logo.png', HERE).href;
 
     function draw(p){
       if(!W || !H) return;
