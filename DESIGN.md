@@ -12,6 +12,29 @@ Recorded from the built world. Ground truth, not intention.
 | `styles.css` | All styling. Opens with the palette derivation comment, then tokens, materials, components, sections, reveals, focus, reduced-motion. |
 | `main.js` | All behaviour. One IIFE, no globals, loaded with `defer`. Header comment lists its thirteen numbered sections. |
 | `Torrey-Pines-High-School-Logo.png` | The official athletics mark, 448×248 RGBA. |
+| `_originals/` | Full-resolution camera originals of the eight photographs. Gitignored and never published. The copies in the root are downscaled derivatives; re-run the resize from here, never from a shipped file, so nothing is resampled twice. |
+
+## Photographs
+
+Eight camera originals, downscaled to 1600px on the long edge and re-encoded as
+JPEG at quality 82. Together they went from 12.1MB to 2.1MB; the homepage
+gallery's four dropped from ~2.9MB to ~1.0MB. Two files were already under the
+cap (`IMG_3030` at 1057×834, Stella's portrait at 1086×1448) and were only
+re-encoded.
+
+Two things that bite when redoing this:
+
+- **`IMG_0153` carries EXIF orientation 6** (rotate 90° clockwise). It is stored
+  5712×4284 but displays portrait. `System.Drawing` does not apply orientation
+  tags, so the rotation is baked in during the resize and the tag dropped —
+  leaving the tag on an already-rotated file makes the browser rotate it twice.
+- **Stella's portrait was a PNG.** Re-encoding a photograph as PNG grew it from
+  3.4MB to 3.7MB, so it is now `B8907198-…-F900FCF48810.jpg`. The source has no
+  alpha (`Format24bppRgb`), so nothing was lost. Anything referencing the old
+  `.PNG` name is a 404.
+
+Every `<img>` carries `width`/`height` matching the shipped file exactly, so the
+frames reserve their space before the image decodes and the page does not shift.
 
 No build step. Open `index.html` directly, or serve the folder over HTTP.
 
@@ -228,7 +251,14 @@ released") rather than inventing filler.
   award-stripe vocabulary. Identity-depth opportunity, not a defect.
 - Application form URL, full event rosters, and the state tournament date are
   marked TODO in the markup; they post when the club opens applications.
-- The gallery ships five `.plate` placeholders, not photographs. Every one is
-  marked TODO, and the captions describe what each frame should show rather
-  than claiming a result. Until real photos land, the page still contains no
-  image of a build, a medal, or a person — the gap the section exists to close.
+- The gallery now ships four real photographs and no placeholders. The
+  `.plate` rules stay in `styles.css` so a future empty slot still has a
+  frame to sit in, but nothing on the page uses them. Spans were re-tuned
+  from five frames to four: a 3:4 portrait frame spanning two rows carries
+  two 16:9 frames beside it, then a 24:9 closing band. Captions state only
+  what is visible — a trophy, medals, a venue — because the club has still
+  published no placements.
+- Officer portraits: four of the five are real photographs; Lawrence Guo
+  keeps the chain-stitched `LG` initials until a picture exists. The
+  `.portrait-initials` placeholder therefore stays live and must keep
+  working alongside `.portrait img`.

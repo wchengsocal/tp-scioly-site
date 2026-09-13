@@ -819,29 +819,36 @@ img,svg{max-width:100%;display:block}
    each other; stacked in one column the same values read as an alternating
    left/right rhythm down the page, which is why they are not overridden. */
 .shot--lead,.shot--b{--wipe:0 100% 0 0}   /* from the left edge  */
-.shot--a,.shot--c{--wipe:0 0 0 100%}      /* from the right edge */
-.shot--d{--wipe:0 50% 0 50%}              /* from the centre out */
+.shot--a{--wipe:0 0 0 100%}               /* from the right edge */
+.shot--c{--wipe:0 50% 0 50%}              /* the closing band, from the centre out */
 
 /* One column on phones: every shot gets the same landscape crop so the
    column reads as a stack rather than a ragged staircase. Ratios are kept
    wide throughout, the section is a band inside a long page, not a
    destination gallery, so it should not out-weigh the events list above it. */
 .shot{--ar:3/2}
-.shot--d{--ar:2/1}
 
 @media(min-width:620px){
   .shots{grid-template-columns:repeat(2,1fr)}
-  .shot--lead,.shot--c,.shot--d{grid-column:span 2}
-  .shot--a,.shot--b{--ar:4/5}
+  /* Four frames in two columns: the first two pair off, then b and c each
+     take the full width. Leaving b in one column stranded it beside an empty
+     wool block, since three single-column items never fill two rows. */
+  .shot--lead,.shot--a{--ar:4/5}
+  .shot--b{grid-column:span 2;--ar:2/1}
+  .shot--c{grid-column:span 2;--ar:24/9}
 }
 @media(min-width:940px){
   .shots{grid-template-columns:repeat(6,1fr)}
-  /* row 1: heavy left · row 2: heavy right · row 3: a wide closing band */
-  .shot--lead{grid-column:span 4;--ar:16/9}
-  .shot--a   {grid-column:span 2;--ar:4/5}
-  .shot--b   {grid-column:span 2;--ar:4/5}
-  .shot--c   {grid-column:span 4;--ar:16/9}
-  .shot--d   {grid-column:span 6;--ar:24/9}
+  /* Three rows, no row spans. Row 1 splits 2/4 — a narrow upright frame
+     against a wide one — then two full-width bands at different depths.
+     Row-spanning the lead was tried twice and abandoned: any frame tall
+     enough to cover two stacked rows has to be far deeper than its own
+     aspect-ratio allows, so it always left a tall empty wool block beneath
+     itself. Matching heights within a single row is what actually closes. */
+  .shot--lead{grid-column:span 2;--ar:3/4}
+  .shot--a   {grid-column:span 4;--ar:3/2}
+  .shot--b   {grid-column:span 6;--ar:21/9}
+  .shot--c   {grid-column:span 6;--ar:24/9}
 }
 
 /* ═══ SEASON, the schedule sewn down the sleeve ═══ */
@@ -1141,6 +1148,29 @@ img,svg{max-width:100%;display:block}
   margin-inline:0;max-width:none;background:rgba(242,230,212,.04);
 }
 .apply-steps .docket-empty{color:var(--bone-dim)}
+
+/* ── APPLICATION CALL ──
+   The form is linked, not embedded. Embedding it showed every visitor a
+   Google sign-in wall, because the form is owned by a school Workspace
+   account whose domain policy blocks outside access, so the iframe was a
+   white box with a login page in it. A button states plainly where it
+   goes and works regardless of the form's sharing settings. */
+.applybox{
+  margin-top:clamp(20px,3vw,30px);
+  border:1px solid var(--stitch-strong);
+  background:rgba(242,230,212,.04);
+  /* generous and even: the panel holds one line and one control, so the
+     air around them is what makes it read as deliberate rather than
+     cramped. Slightly more below the button than above the caption, so
+     the button is not crowded against the lower border. */
+  padding:clamp(26px,3.6vw,40px) clamp(24px,3.4vw,38px) clamp(30px,4vw,44px);
+  display:grid;justify-items:start;
+  gap:clamp(20px,2.8vw,28px);
+}
+.applybox-note{
+  margin:0;color:var(--bone);font-size:var(--fs-prose);
+  line-height:1.5;
+}
 /* Ready for Sep 27: teams sit side by side once there is more than one,
    and fall to a single column on a phone. Nothing here renders until the
    .docket-empty inside #teams is replaced with real rosters. */
